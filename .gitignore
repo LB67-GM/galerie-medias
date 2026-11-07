@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+data/
+dist/
+.firewall-ok
+.deps-ok
+.proto-demo/
+reparer-installation.log
+.paquets.txt
+
+# Réglages, secrets et bases locales. Jamais dans le dépôt public.
+.env
+.env.*
+*.pem
+*.key
+*.sqlite
+*.sqlite3
+*.db
+*.ses
+

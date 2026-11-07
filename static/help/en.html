@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Help — Galerie Médias</title>
+  <script>
+    try {
+      var theme = localStorage.getItem("galerie-theme");
+      var themes = ["amber", "ink", "ocean", "forest", "paper", "daylight"];
+      if (themes.indexOf(theme) >= 0) document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="/static/styles.css?v=79">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+</head>
+<body class="help-standalone">
+  <header class="help-bar">
+    <a class="help-back" href="/">Back to the gallery</a>
+    <nav class="help-langs" aria-label="Language">
+      <a href="fr.html" hreflang="fr" lang="fr" title="Français" aria-label="Français"><img class="flag" alt="" src="/static/flags/fr.svg"></a>
+      <a href="en.html" hreflang="en" lang="en" title="English" aria-label="English" aria-current="page"><img class="flag" alt="" src="/static/flags/gb.svg"></a>
+      <a href="es.html" hreflang="es" lang="es" title="Español" aria-label="Español"><img class="flag" alt="" src="/static/flags/es.svg"></a>
+      <a href="de.html" hreflang="de" lang="de" title="Deutsch" aria-label="Deutsch"><img class="flag" alt="" src="/static/flags/de.svg"></a>
+    </nav>
+  </header>
+  <article id="helpArticle" class="help-doc">
+    <h1>Help</h1>
+    <p>Galerie Médias, version 3.0. This guide describes each menu, in the order you see them. The same text exists in French, Spanish, and German: change the language at the top right, then open <strong>?</strong> again.</p>
+    <nav class="toc" aria-label="On this page">
+      <ol>
+        <li><a href="#help-application">The application</a></li>
+        <li><a href="#help-langue">Language and theme</a></li>
+        <li><a href="#help-https">HTTPS and the certificate</a></li>
+        <li><a href="#help-connexion">Sign in</a></li>
+        <li><a href="#help-mot-de-passe">Forgot password</a></li>
+        <li><a href="#help-photos">Photos</a></li>
+        <li><a href="#help-personnes">People</a></li>
+        <li><a href="#help-scenes">Scenes</a></li>
+        <li><a href="#help-doublons">Duplicates</a></li>
+        <li><a href="#help-carte">Map</a></li>
+        <li><a href="#help-albums">Albums</a></li>
+        <li><a href="#help-corbeille">Trash</a></li>
+        <li><a href="#help-parametres">Settings</a></li>
+        <li><a href="#help-outils">Tools</a></li>
+        <li><a href="#help-lecture">Viewer account</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="help-application">The application</h2>
+    <p>Galerie Médias is a site you run at home, on your computer. It shows the photos and videos from a folder on that machine, or on a network disk, without sending them elsewhere. You find them by year, month, place, moment, album, or first name. You view them large, as a slideshow, or on a television in the house. You can send a photo or a video to Facebook, Messenger, Instagram, or TikTok: the file goes to the app, and the site stays private. An administrator prepares the library, names people, sorts scenes, corrects a place, moves files, or sends them to Trash. A viewer account looks, without changing anything.</p>
+    <p>The server program is written in <strong>Python</strong>. The pages you see are written in <strong>HTML</strong>, <strong>CSS</strong>, and <strong>JavaScript</strong>. The list of photos is stored in <strong>SQLite</strong>, which comes with Python. The map uses Leaflet. Faces, scenes, and videos rely on other open programs, including OpenCV, InsightFace, ONNX Runtime, and FFmpeg.</p>
+    <p>Galerie Médias is published under the <strong>MIT</strong> licence (file <code>LICENSE</code>). You may copy, modify and redistribute this program, including in a paid product, as long as that file and the author’s name stay with it. The other components are listed in <code>NOTICE</code>.</p>
+    <p>The libraries installed with Python keep their own licence (MIT, BSD or Apache 2.0). The map uses Leaflet 1.9.4 (BSD). The flags come from flag-icons (MIT). City names come from <a href="https://www.geonames.org/">GeoNames</a>, under Creative Commons BY 4.0. Map tiles are © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+    <p>The InsightFace face models (<code>buffalo_l</code>), downloaded into <code>~/.insightface/</code>, are not under MIT. InsightFace reserves them for non-commercial research. Without those models, detection uses OpenCV (YuNet and SFace), under a permissive licence. FFmpeg, used for videos, is a separate program under the GPL. It is not included in the Galerie Médias sources.</p>
+
+    <h2 id="help-langue">Language and theme</h2>
+    <p>Two menus stay at the top right.</p>
+    <ul>
+      <li><strong>Language</strong>: French, English, Spanish, or German. On the first visit, the site follows your browser. If it does not recognize that language, it stays in French.</li>
+      <li><strong>Theme</strong>: Amber (dark, warm), Ink, Ocean, Forest, Paper (light), and Daylight (light). Amber is the original theme.</li>
+    </ul>
+    <p>The choice stays in this browser, on this device. It does not change anyone else’s account.</p>
+
+    <h2 id="help-https">HTTPS and the certificate</h2>
+    <p>The site always opens with an address that starts with <strong>https://</strong>, on port 8765. There is no <strong>http://</strong> address. The lock encrypts the exchange between your browser and the computer that runs the gallery. The photos stay on that computer. They are not published on the Internet.</p>
+    <p>Two locks are possible. The first one is enough at home.</p>
+    <ul>
+      <li><strong>Home certificate.</strong> Nothing to install. It is created on the first start. The browser shows a warning once, because this certificate is not known to the public. Continue to the site: it is your computer. On this computer, the address is <code>https://127.0.0.1:8765</code>. From a phone on the same Wi-Fi, it looks like <code>https://192.168.x.x:8765</code>.</li>
+      <li><strong>Name certificate.</strong> <a href="https://letsencrypt.org/">Let’s Encrypt</a> issues it for free. It is tied to a name, for example <code>https://photos.example.com:8765</code>. The browser no longer shows a warning. When it is installed, it replaces the home certificate. When it is missing, the home certificate stays in use. The tool that requests it is called Certbot: <a href="https://certbot.eff.org/">certbot.eff.org</a>.</li>
+    </ul>
+    <p><a href="https://www.wireguard.com/">WireGuard</a> is a VPN: a private tunnel between your phone, or another computer, and the house, when you are not on the Wi-Fi. Installers for Windows, macOS, Linux, iPhone, and Android are at <a href="https://www.wireguard.com/install/">wireguard.com/install</a>. With the name certificate, the gallery answers on the home Wi-Fi and through this tunnel. It does not answer from a café without the tunnel. Do not open port 8765 on the router.</p>
+    <p>An LG or Samsung television uses another port, 8766, without a certificate. That is not the address of the site. The <strong>TV</strong> button uses it only on the home network.</p>
+    <h3>Obtain the name certificate</h3>
+    <p>This part is optional. It proves that the name belongs to you, without opening a port. The certificate follows the name: when you move, change the address of the name and keep the same certificate.</p>
+    <p>These three steps are the same on Linux, macOS, and Windows.</p>
+    <ol>
+      <li>Register a domain name at <a href="https://www.cloudflare.com/">Cloudflare</a>. Decline any paid offer for a certificate, hosting, or email. Let’s Encrypt is free.</li>
+      <li>In the DNS for the name, add an <strong>A</strong> record. Name: <strong>@</strong>. Address: the computer that runs the gallery, on the home network (it often starts with 192.168). Click the Cloudflare cloud until it is <strong>grey</strong>. An orange cloud does not fit. Do not forward port 8765 to the Internet.</li>
+      <li>Create a token on <a href="https://dash.cloudflare.com/profile/api-tokens">the Cloudflare token page</a>, limited to this name, with permission to edit DNS. Do not copy it into a message, a document, or a chat. The file that holds it has one line: <code>dns_cloudflare_api_token = THE_TOKEN</code></li>
+    </ol>
+    <p>The command that requests the certificate depends on the system. Replace <code>photos.example.com</code> with your name. The expected ending is <code>Successfully received certificate</code>. Two files matter: <code>fullchain.pem</code> and <code>privkey.pem</code>. Copy the files themselves, not a shortcut.</p>
+    <h3>Linux</h3>
+    <p>On the Linux computer that runs the site:</p>
+    <pre>sudo apt-get install certbot python3-certbot-dns-cloudflare</pre>
+    <p>Save the token in <code>/etc/letsencrypt/cloudflare.ini</code>, readable only by the administrator (mode 600). Then:</p>
+    <pre>sudo certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>Copy the two files into the gallery folder. Create it if it is missing. A gallery started with <code>start-linux.sh</code> reads them in <code>~/.config/galerie-photos/cache/letsencrypt/</code>. A service whose cache is <code>~/.cache/photo-library/</code> reads them in <code>~/.cache/photo-library/letsencrypt/</code>.</p>
+    <pre>mkdir -p ~/.config/galerie-photos/cache/letsencrypt
+sudo cp -L /etc/letsencrypt/live/photos.example.com/fullchain.pem ~/.config/galerie-photos/cache/letsencrypt/
+sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem ~/.config/galerie-photos/cache/letsencrypt/</pre>
+    <p>About every sixty days, run the same Certbot command and copy the two files again.</p>
+    <h3>macOS</h3>
+    <p>The Linux command does not run as-is in the Mac Terminal. Install <a href="https://brew.sh/">Homebrew</a>, then Certbot and the Cloudflare module:</p>
+    <pre>brew install certbot
+"$(brew --prefix certbot)/libexec/bin/python3" -m pip install certbot-dns-cloudflare</pre>
+    <p>Create the folder <code>~/.secrets/certbot/</code> and the file <code>cloudflare.ini</code> with the token line. In Terminal: <code>chmod 600 ~/.secrets/certbot/cloudflare.ini</code>. Then:</p>
+    <pre>sudo certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>The files arrive in <code>/etc/letsencrypt/live/photos.example.com/</code>. Copy them to the gallery folder. Create that folder if it does not exist:</p>
+    <pre>mkdir -p "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt"
+sudo cp -L /etc/letsencrypt/live/photos.example.com/fullchain.pem "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt/"
+sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt/"</pre>
+    <p>Close the gallery window and open <code>start-mac.command</code> again. The certificate lasts about sixty days. Run the Certbot command again, then copy the two files again. The script that renews by itself is for Linux only.</p>
+    <h3>Windows</h3>
+    <p>The Linux command does not work in the gallery’s black window, nor in the command prompt, until Certbot is installed for Windows.</p>
+    <p>The simplest way, if a Linux computer at home already has the certificate: copy <code>fullchain.pem</code> and <code>privkey.pem</code> into</p>
+    <pre>C:\Users\YOURNAME\AppData\Roaming\GaleriePhotos\cache\letsencrypt\</pre>
+    <p>Create the <code>letsencrypt</code> folder if it does not exist. Close the black window, then open the gallery again.</p>
+    <p>If the gallery runs only on Windows, install Python from <a href="https://www.python.org/downloads/">python.org/downloads</a> and tick “Add python.exe to PATH”. Open PowerShell, then:</p>
+    <pre>py -m pip install certbot certbot-dns-cloudflare</pre>
+    <p>Create a file, for example <code>C:\Users\YOURNAME\secrets\cloudflare.ini</code>, with the token line. Then, in PowerShell:</p>
+    <pre>py -m certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials C:\Users\YOURNAME\secrets\cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>Certbot names the folder at the end. It contains the two files. On Windows, that folder is often <code>C:\Certbot\live\photos.example.com\</code>. Copy <code>fullchain.pem</code> and <code>privkey.pem</code> into <code>C:\Users\YOURNAME\AppData\Roaming\GaleriePhotos\cache\letsencrypt\</code>, then open the gallery again. About every sixty days, run the same Certbot command and copy the two files again.</p>
+    <p>Then open <code>https://photos.example.com:8765</code>. The lock matches the name. The port stays 8765.</p>
+    <p>Installing the program on Linux, macOS, and Windows is described separately: <a href="/static/install/en.html">Installation</a>.</p>
+
+    <h2 id="help-connexion">Sign in</h2>
+    <p>Until an account exists, the gallery is open. As soon as one account is created, the sign-in page appears.</p>
+    <ol>
+      <li>Enter your username.</li>
+      <li>Enter your password.</li>
+      <li>Choose <strong>Sign in</strong>.</li>
+    </ol>
+    <p>This browser then recognizes you for 14 days. You do not have to type the password again on each visit, on this same device. <strong>Log out</strong> removes access: photos stay hidden until you sign in again.</p>
+    <p>Three wrong attempts lock the account. Use <strong>Forgot password</strong>, or ask an administrator to reset it.</p>
+    <p>The first account is an administrator. A <strong>viewer</strong> account can see photos, the map, albums, and this help. It cannot change the library or the accounts.</p>
+
+    <h2 id="help-mot-de-passe">Forgot password</h2>
+    <p>On the sign-in page, choose <strong>Forgot password</strong>.</p>
+    <ol>
+      <li>Enter the account email.</li>
+      <li>Choose <strong>Send link</strong>.</li>
+      <li>Open the message. The link is valid for one hour.</li>
+      <li>Choose a new password, at least 8 characters, and confirm it.</li>
+    </ol>
+    <p>The site does not say whether the email exists. If it matches an account, the link is sent. After you save it, older sessions for that account are closed: you need to sign in again.</p>
+    <p>The email entered here is the account email, under <strong>Accounts</strong>. It is not necessarily the address that sends the messages. If email is not set up yet, the site says so. An administrator prepares it in <strong>Settings</strong>, under <strong>Email</strong>, and enters each account’s email under <strong>Accounts</strong>. Without that, only an administrator can set a new password.</p>
+
+    <h2 id="help-photos">Photos</h2>
+    <p>This is the home page. With no filter, the newest photos appear first.</p>
+    <h3>Filters</h3>
+    <p>On a phone, open <strong>Filters</strong>. Filters combine: a year <em>and</em> a place <em>and</em> an album, for example.</p>
+    <ul>
+      <li><strong>Year</strong> and <strong>Month</strong>: from the folder or the photo’s date.</li>
+      <li><strong>Place</strong>: a city, region, or country. <strong>Moment</strong>: a trip, a birthday, a party. A trip is not a place.</li>
+      <li><strong>Type</strong>: photos or videos.</li>
+      <li><strong>Album</strong> and <strong>Scene</strong>: see below.</li>
+      <li><strong>Search</strong>: a whole word in the file name, place, moment, or first name. “Rome” does not find “Andromeda”. The cross in the field brings back the whole gallery. There is no People menu here: type the first name in search.</li>
+    </ul>
+    <p>Changing a filter clears the current selection.</p>
+    <h3>View a photo</h3>
+    <p>Click a thumbnail to open it large. The frame keeps the proportions. Pinch the screen, or use the wheel, to zoom. <strong>Previous</strong> and <strong>Next</strong> move to the neighboring photo. <strong>Slideshow</strong> plays them in order.</p>
+    <p>Videos play in the browser, including those from an iPhone.</p>
+    <p><strong>Share</strong> sends the photo or video to Facebook, Messenger, Instagram, or TikTok. The file goes to the app: these networks do not read the site. On a computer without a share list, the file downloads; then open the app and choose it.</p>
+    <h3>Television</h3>
+    <p><strong>TV</strong> sends the photo or video to an LG or Samsung TV that is on, on the same network. Choose the TV’s name, then stop it from the same window when you are done.</p>
+    <h3>Selection</h3>
+    <p>These actions are for the administrator, except the slideshow, the TV, and sharing.</p>
+    <ul>
+      <li><strong>This page</strong> checks the visible photos. <strong>Select all</strong> checks the whole filter, not only this page. Shift-click selects a range. <strong>Clear selection</strong> removes the checks.</li>
+      <li>The star adds the photo to an album, or removes it.</li>
+      <li><strong>Add to album</strong> and <strong>Remove from album</strong> need at least one checked photo.</li>
+      <li><strong>Place</strong> corrects the displayed name and the pin on the map. The folder on disk does not change. Drag the map: the pin stays in the center. You can also correct the other photos in that folder only.</li>
+      <li><strong>Move</strong> sends the checked files to a folder that already exists, in the same year. A video with the same name goes with them.</li>
+      <li><strong>Export</strong> copies the originals to a folder, or downloads a zip archive. The library files stay where they are.</li>
+      <li><strong>Delete</strong> sends the selection to Trash for 30 days, after you confirm. The limit is 500 files at a time.</li>
+    </ul>
+    <p>In the large view, <strong>Rotate / crop</strong> keeps the edited photo in the gallery and puts the original in Trash. <strong>Restore</strong>, in Trash, brings the original back.</p>
+
+    <h2 id="help-personnes">People</h2>
+    <p>Administrators only. Recognition stays on this computer: no face is sent anywhere else.</p>
+    <ol>
+      <li>Choose <strong>Index</strong> in Tools, so the photos are known.</li>
+      <li>Choose <strong>Find people</strong>. The first time can take a while.</li>
+      <li>Check only the faces you recognize, then name the selection.</li>
+      <li><strong>Review</strong> brings a photo of that person to the top. <strong>Not…</strong> removes a mistake.</li>
+    </ol>
+    <p>In the large view, the X key removes the face. For new photos: index first, then detect again. Only files that have not been analyzed yet are processed.</p>
+
+    <h2 id="help-scenes">Scenes</h2>
+    <p>Administrators only. A scene is a tag: church, mountain, city, range…</p>
+    <ol>
+      <li>Choose a year, and a place if you want a smaller set.</li>
+      <li>Choose <strong>Find scenes</strong>. The result is a suggestion, and often needs correction.</li>
+      <li>Check only the right photos, then tag the selection.</li>
+      <li><strong>Review</strong>, then <strong>Not…</strong>, removes a mistake.</li>
+    </ol>
+    <p>In Photos, the <strong>Scene</strong> filter finds those photos later.</p>
+
+    <h2 id="help-doublons">Duplicates</h2>
+    <p>Administrators only. The same photo can exist as several files. <strong>Keep</strong> is a suggestion, not a requirement.</p>
+    <p>You can trash every extra copy, or only the ones you check. A confirmation appears. The files stay in Trash for 30 days.</p>
+
+    <h2 id="help-carte">Map</h2>
+    <p>Each marker is a place. Click it to open the photos of that place. Trips, birthdays, and parties live in the <strong>Moment</strong> filter, not on the map.</p>
+    <p>Map tiles come from the Internet (© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors). Without a network, the map does not appear; the photos themselves remain available.</p>
+    <p>A place you corrected in <strong>Place</strong> stays in the Place menu.</p>
+
+    <h2 id="help-albums">Albums</h2>
+    <p>An album is a list. Files are not copied: a photo can be in several albums. <strong>Favorites</strong> is an album like the others.</p>
+    <ol>
+      <li>Type a name, then create the album.</li>
+      <li>Open it, or go back to Photos.</li>
+      <li>Check photos, then <strong>Add to album</strong>. The star does the same thing, and can also remove the photo.</li>
+    </ol>
+    <p>In an open album, <strong>Remove from album</strong> takes the selection out of that album. The file stays in the library.</p>
+
+    <h2 id="help-corbeille">Trash</h2>
+    <p>Administrators only. Deleted photos stay here for 30 days. After that, the site removes them.</p>
+    <ul>
+      <li><strong>Restore selection</strong> puts the files back.</li>
+      <li><strong>Delete permanently</strong> applies only to the checked files, after you confirm. This cannot be undone.</li>
+    </ul>
+    <p><strong>This page</strong>, <strong>All</strong>, and <strong>Clear selection</strong> work as they do in Photos.</p>
+
+    <h2 id="help-parametres">Settings</h2>
+    <p>Administrators only. <strong>Save</strong>, at the bottom of the page, stores the settings. It does not download, organize, or back up.</p>
+    <h3>Phone</h3>
+    <p>The site stays on the computer that runs it. On the phone, use the same Wi-Fi, open the site address, then accept the certificate if the browser asks. You can then add it to the home screen.</p>
+    <p>Choose where the photos come from: iPhone / iCloud, Android / Google Photos, or a Facebook / Messenger archive.</p>
+    <h3>iCloud</h3>
+    <p>This section downloads photos and videos still in iCloud into the intake folder. Enter the Apple ID, the password, and, if you want, the year and month. The password stays encrypted on this computer. The code Apple asks for appears on the iPhone: type it on this page, not in another window.</p>
+    <p>The intake folder is an arrival area. It is not the gallery. Files stay there until you organize them, then click <strong>Index</strong>. Example after an iCloud download:</p>
+    <pre>triage/2024/06/IMG_1234.HEIC</pre>
+    <h3>Google Photos</h3>
+    <p>Two simple ways: export from Google Takeout, or plug in the phone and copy the DCIM folder. Then point to that folder. Organizing is done under Organize.</p>
+    <h3>Facebook</h3>
+    <p>You can download photos and videos from Facebook. In Facebook: Settings and privacy, then Your information, then Download your information. Request the photos, the videos, and the messages. The file <strong>message_1.json</strong> holds the date, because these files often have no date inside the photo itself. Unpack the archive into the folder you set, save, then run <strong>Organize from Facebook</strong>.</p>
+    <pre>facebook/messages/inbox/Name/photos/12345.jpg
+facebook/messages/inbox/Name/message_1.json</pre>
+    <p>After organizing, a file dated March 2019 is stored like this. When a location is present, the city replaces the month:</p>
+    <pre>Annee 2019/Mars 2019/12345.jpg
+Annee 2019/Montreal/12345.jpg</pre>
+    <h3>Organize</h3>
+    <p>Organizing copies files into the library. When the source and the destination are the same folder, it moves them. Run the simulation first: it writes nothing. Then click <strong>Index</strong> to see the photos.</p>
+    <p><strong>Organize year / month</strong> sorts by date. A photo taken in June 2024, still in the intake folder, becomes:</p>
+    <pre>Annee 2024/Juin 2024/IMG_1234.HEIC</pre>
+    <p><strong>Organize from intake</strong> reads the intake folder (iCloud) or the Takeout / DCIM folder. <strong>Organize the current library</strong> does not read the intake folder. It sorts photos already in the library, at the root of a year or in a month folder, into a city folder when a location is present:</p>
+    <pre>Annee 2024/Rome/IMG_1234.HEIC</pre>
+    <p>Without a location, the file stays in the month folder, for example <strong>Annee 2024/Juin 2024/</strong>. The name Annee and the French month names are the folder names on disk. They do not change with the site language.</p>
+    <h3>Backup</h3>
+    <p>Choose a folder (an external disk, another computer), then <strong>Back up now</strong>. The copy contains the index, the settings, and the site pages. Thumbnails are not copied: <strong>Index</strong> rebuilds them. The photos themselves stay where they are.</p>
+    <h3>Email</h3>
+    <p>This section sets the account that sends the “forgot password” link. It is not each person’s email. One account is enough for the whole household.</p>
+    <p>Example with Gmail:</p>
+    <ul>
+      <li><strong>Server</strong>: smtp.gmail.com</li>
+      <li><strong>Port</strong>: 587</li>
+      <li><strong>Username</strong>: john.doe@gmail.com</li>
+      <li><strong>Password</strong>: a Google app password, 16 letters. Google shows them as four blocks separated by spaces. Spaces do not count: the site removes them. This is not the usual Google account password.</li>
+      <li><strong>From</strong>: john.doe@gmail.com, the same account as the username. An invented address, for example galerie@gmail.com, is not sent.</li>
+      <li><strong>STARTTLS encryption</strong>: on.</li>
+      <li><strong>Site address</strong>: https://photos.example.com:8765, as people open it in the browser.</li>
+    </ul>
+    <p>The app password is created at https://myaccount.google.com/apppasswords, after 2-Step Verification. Choose “Other” and the name Gallery. It stays encrypted on this computer. Leave the field empty to keep the one already stored.</p>
+    <p><strong>Save</strong>, at the bottom of the page, stores this section. It does not store account emails.</p>
+    <h3>Accounts</h3>
+    <p>Each person has their own email. It is the address that receives the link, and the address they type in <strong>Forgot password</strong>. It can differ from the Gmail account that sends.</p>
+    <p>John Doe uses john.doe@gmail.com to send. His gallery account uses that same address only if it really is his mailbox. Marie Martin has another account: her email is marie.martin@gmail.com. Marie’s link arrives in Marie’s mailbox. Two accounts cannot share the same address.</p>
+    <p>When you create an account, the email is required. After a change, the <strong>Save</strong> button on the same line as the account shows “Email saved.” Reload the page: the address must still be there. The button at the bottom of the page does not save it. The browser’s autofill can show an address that is not saved.</p>
+    <p>Also create a username, a password of at least 8 characters, and a role. You can remove an account.</p>
+
+    <h2 id="help-outils">Tools</h2>
+    <p>Administrators only. The <strong>Tools</strong> button opens three actions.</p>
+    <ul>
+      <li><strong>Index</strong> reads the library and prepares thumbnails. Choose a year, or the whole library. Do this before finding people or scenes, and after new photos arrive.</li>
+      <li><strong>Find people</strong>: see People.</li>
+      <li><strong>Find scenes</strong>: see Scenes.</li>
+    </ul>
+    <p>Progress appears in the bar at the top of the page. Wait until it finishes before starting another one.</p>
+
+    <h2 id="help-lecture">Viewer account</h2>
+    <p>With a viewer account, you see <strong>Photos</strong>, <strong>Map</strong>, <strong>Albums</strong>, and <strong>?</strong>. You can filter, open photos, start the slideshow, send to the TV, and share a photo or a video.</p>
+    <p>You do not see People, Scenes, Duplicates, Trash, Settings, or Tools. You cannot delete, move, export, or edit a place.</p>
+  </article>
+  <script>
+    document.querySelectorAll(".help-langs a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        try { localStorage.setItem("galerie-lang", a.getAttribute("hreflang")); } catch (e) {}
+      });
+    });
+  </script>
+</body>
+</html>

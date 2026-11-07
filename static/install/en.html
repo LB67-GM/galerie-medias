@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installation — Galerie Médias</title>
+  <link rel="stylesheet" href="../styles.css?v=79">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+</head>
+<body class="help-standalone">
+  <header class="help-bar">
+    <a class="help-back" href="/">Back to the gallery</a>
+    <nav class="help-langs" aria-label="Language">
+      <a href="fr.html" hreflang="fr" lang="fr" title="Français" aria-label="Français"><img class="flag" alt="" src="/static/flags/fr.svg"></a>
+      <a href="en.html" hreflang="en" lang="en" title="English" aria-label="English" aria-current="page"><img class="flag" alt="" src="/static/flags/gb.svg"></a>
+      <a href="es.html" hreflang="es" lang="es" title="Español" aria-label="Español"><img class="flag" alt="" src="/static/flags/es.svg"></a>
+      <a href="de.html" hreflang="de" lang="de" title="Deutsch" aria-label="Deutsch"><img class="flag" alt="" src="/static/flags/de.svg"></a>
+    </nav>
+  </header>
+  <article class="help-doc">
+    <h1>Installation</h1>
+    <p>Galerie Médias, version 3.0. The site stays on your computer. Photos may stay on a USB disk. The database (SQLite, thumbnails, settings) always stays on the computer, never on the USB disk. The site listens only on HTTPS.</p>
+    <p>The same guide exists in <a href="fr.html" hreflang="fr">French</a>, <a href="es.html" hreflang="es">Spanish</a>, and <a href="de.html" hreflang="de">German</a>. How the menus work is in the <strong>?</strong> help.</p>
+
+    <h2>Where the files are</h2>
+    <ul>
+      <li><strong>Photos and videos</strong>: the folder set in Settings. Windows example: <code>E:\Photos</code>.</li>
+      <li><strong>Windows</strong>: <code>C:\Users\YOURNAME\AppData\Roaming\GaleriePhotos\</code> (<code>ouvrir-dossier-base.bat</code>).</li>
+      <li><strong>macOS</strong>: <code>Library/Application Support/GaleriePhotos/</code>.</li>
+      <li><strong>Linux</strong>: <code>~/.config/galerie-photos/</code>.</li>
+    </ul>
+    <p>Unpack the program into Documents, not from inside the still-open zip, and not necessarily onto the USB disk.</p>
+
+    <h2>Windows</h2>
+    <ol>
+      <li>Install <a href="https://www.python.org/downloads/">Python 3.10 or newer</a> from python.org, not from the Microsoft Store. Check <strong>Add python.exe to PATH</strong>.</li>
+      <li>Unpack the zip, for example into <code>Documents\galerie-medias\</code>.</li>
+      <li>Double-click <strong>preparer-python.bat</strong> (creates <code>.venv</code> without opening the site).</li>
+      <li>Double-click <strong>ouvrir-galerie.bat</strong> (or <code>start-windows.bat</code>). The first time, installing the packages takes a few minutes. Internet is required. If Windows asks for the firewall, click <strong>Yes</strong>. That rule remains after a restart. Wi-Fi must be a <strong>Private</strong> network.</li>
+      <li>The browser opens <a href="https://127.0.0.1:8765">https://127.0.0.1:8765</a>. On the first visit, continue to the site (home certificate). A phone on the same Wi-Fi uses the address shown in the black window.</li>
+    </ol>
+    <p>Leave the black window open while you use the site. To stop, close it. The window follows the Windows language (French, English, Spanish, or German).</p>
+    <ul>
+      <li><code>creer-raccourci-bureau.bat</code> — Desktop icon.</li>
+      <li><code>lister-disques.bat</code> — USB drive letter.</li>
+      <li><code>autoriser-parefeu.bat</code> — ports 8765 (site) and 8766 (TV), permanent.</li>
+      <li><code>reparer-installation.bat</code> — if the site no longer starts, or after a new version.</li>
+      <li><code>gerer-utilisateurs.bat</code> — accounts, password, unlock.</li>
+    </ul>
+
+    <h2>macOS</h2>
+    <ol>
+      <li>Python 3.10 or newer: <a href="https://www.python.org/downloads/">python.org</a> or <code>brew install python</code>.</li>
+      <li>Double-click <code>start-mac.command</code>. If macOS blocks it: right-click, then <strong>Open</strong>.</li>
+      <li>The session password may be requested for the firewall. The rule is permanent. Refusing it does not prevent opening the site on this computer. To try again: <code>autoriser-parefeu-mac.command</code>.</li>
+      <li>The browser opens <code>https://127.0.0.1:8765</code>. Continue to the site on the first visit.</li>
+    </ol>
+    <p>After a new version: <code>reparer-installation-mac.command</code>. If the zip is unpacked over the same folder, <code>start-mac.command</code> also reinstalls the packages when <code>REQUIS-en.md</code> has changed. The window follows the Mac language.</p>
+    <p>Sorting: <code>classer-annee-mois-mac.command</code>, then <code>classer-lieux-mac.command</code>. Accounts: <code>gerer-utilisateurs-mac.command</code>.</p>
+
+    <h2>Linux</h2>
+    <ol>
+      <li>Python 3.10 or newer, and <code>python3-venv</code> when the distribution splits it. Debian or Ubuntu: <code>sudo apt-get install python3 python3-venv python3-pip</code>. Fedora: <code>sudo dnf install python3</code>.</li>
+      <li>Unpack the zip, for example into <code>~/Documents/galerie-medias/</code>.</li>
+      <li>In a terminal, from that folder: <code>bash start-linux.sh</code>.</li>
+      <li>The script prepares <code>.venv</code>, tries to open ports 8765 and 8766 (firewalld or ufw), then starts the site. If the administrator password is refused, the site still works on this computer.</li>
+      <li>The browser opens <code>https://127.0.0.1:8765</code>. Continue to the site on the first visit. A phone on the same Wi-Fi uses the address shown in the terminal.</li>
+    </ol>
+    <p>Leave the terminal open. To stop, close it. Messages follow <code>LANG</code> (French, English, Spanish, or German; otherwise French).</p>
+
+    <h2>HTTPS</h2>
+    <p>The site has no HTTP mode. On the first start, a home certificate is created. The browser warns once: continue to the site.</p>
+    <p>For a public name, for example <code>https://photos.example.com:8765</code>, the certificate comes from Let’s Encrypt, proved through DNS. No port is opened on the router. The detail, in four languages, is in the help: <a href="/static/help/en.html#help-https">HTTPS and the certificate</a>.</p>
+    <ol>
+      <li>Register the name at Cloudflare. Do not pay for an extra certificate: <a href="https://letsencrypt.org/">Let’s Encrypt</a> is free.</li>
+      <li><strong>A</strong> record, name <strong>@</strong>, address of the computer on the home network. Cloudflare cloud <strong>grey</strong>. Do not forward port 8765 to the Internet.</li>
+      <li>The command that requests the certificate is not the same on Linux, macOS, and Windows. The steps are in the help. On Linux, a script copies the files. On macOS and Windows, copy <code>fullchain.pem</code> and <code>privkey.pem</code> into the settings folder <code>letsencrypt</code>, then open the gallery again.</li>
+    </ol>
+
+    <h2>First use</h2>
+    <ol>
+      <li>Plug in the disk and wait until it appears.</li>
+      <li>Open <strong>Settings</strong>. Set the photo folder, then <strong>Save</strong>.</li>
+      <li>Sort before indexing. Loose photos, or photos already by year: <code>classer-lieux.bat</code> (Windows) or <code>classer-lieux-mac.command</code>. A mixed tree, for example DCIM: first <code>classer-annee-mois</code>, then <code>classer-lieux</code>. Choice 1 previews, choice 2 writes. On Linux: <code>.venv/bin/python tools/sort_annee_mois.py SOURCE DEST</code>, then <code>.venv/bin/python tools/sort_lieux.py -d DEST</code>. Add <code>--apply</code> to write.</li>
+      <li>In the site: <strong>Index</strong>. Wait until it finishes.</li>
+    </ol>
+    <p>The folders created are named <code>Annee 2024</code> and <code>Juin 2024</code>. Those names stay in French on disk.</p>
+
+    <h2>Update</h2>
+    <p>Close the site window. Unpack the new zip over the same folder. Do not delete GaleriePhotos (Windows, macOS) or <code>~/.config/galerie-photos</code> (Linux). Do not copy the photos again. Then <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, or run <code>start-linux.sh</code> again. Reload the page. The detail is in <code>MISE-A-JOUR-en.md</code>. The requirements are in <code>REQUIS-en.md</code>.</p>
+
+    <h2>If the page does not open</h2>
+    <ul>
+      <li>Python not found: python.org, PATH checked, then start again.</li>
+      <li>Close the old window, start again, and open <code>https://127.0.0.1:8765</code> by hand.</li>
+      <li>The address <code>http://</code> does not answer: the site is HTTPS only.</li>
+      <li>Photos not found: disk plugged in, right drive letter (<code>lister-disques.bat</code>).</li>
+    </ul>
+  </article>
+</body>
+</html>

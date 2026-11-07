@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1b1916">
+  <script>
+    try {
+      var theme = localStorage.getItem("galerie-theme");
+      var lang = localStorage.getItem("galerie-lang");
+      var themes = ["amber", "ink", "ocean", "forest", "paper", "daylight"];
+      var langs = ["fr", "en", "es", "de"];
+      if (themes.indexOf(theme) >= 0) document.documentElement.setAttribute("data-theme", theme);
+      if (langs.indexOf(lang) >= 0) document.documentElement.lang = lang;
+    } catch (e) {}
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Galerie Médias</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-title" content="Galerie Médias">
+  <link rel="stylesheet" href="/static/styles.css?v=79">
+  <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+</head>
+<body>
+  <div class="site-prefs" id="sitePrefs">
+    <a id="prefHelp" class="pref-help" href="/static/help/fr.html" title="Aide" aria-label="Aide" data-i18n-title="nav.helpTitle" data-i18n-aria="nav.helpTitle">?</a>
+    <label>
+      <span class="visually-hidden" data-i18n="pref.language">Langue</span>
+      <select id="prefLang" data-i18n-aria="pref.language" aria-label="Langue">
+        <option value="fr" title="Français" lang="fr">🇫🇷</option>
+        <option value="en" title="English" lang="en">🇬🇧</option>
+        <option value="es" title="Español" lang="es">🇪🇸</option>
+        <option value="de" title="Deutsch" lang="de">🇩🇪</option>
+      </select>
+    </label>
+    <label>
+      <span class="visually-hidden" data-i18n="pref.theme">Thème</span>
+      <select id="prefTheme" data-i18n-aria="pref.theme" aria-label="Thème">
+        <option value="amber" data-i18n="theme.amber">Ambre</option>
+        <option value="ink" data-i18n="theme.ink">Encre</option>
+        <option value="ocean" data-i18n="theme.ocean">Océan</option>
+        <option value="forest" data-i18n="theme.forest">Forêt</option>
+        <option value="paper" data-i18n="theme.paper">Papier</option>
+        <option value="daylight" data-i18n="theme.daylight">Jour</option>
+      </select>
+    </label>
+  </div>
+  <div id="loginGate" class="login-gate hidden">
+    <div id="loggedOutCard" class="login-card hidden">
+      <h1>Galerie Médias</h1>
+      <p class="muted login-version">Version 3.0</p>
+      <p class="muted" data-i18n="login.signedOut">Vous êtes déconnecté. Les photos ne s’affichent plus.</p>
+      <button type="button" id="btnSignInAgain" class="primary" data-i18n="action.signIn">Se connecter</button>
+    </div>
+    <form id="loginForm" class="login-card">
+      <h1>Galerie Médias</h1>
+      <p class="muted login-version">Version 3.0</p>
+      <p class="muted" data-i18n-html="login.lead">La galerie de la maison. Un compte <strong>lecture</strong> voit les photos, la carte et les albums.</p>
+      <label data-i18n="login.user">Identifiant
+        <input id="loginUser" name="username" autocomplete="username" required>
+      </label>
+      <label data-i18n="login.pass">Mot de passe
+        <input id="loginPass" name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="loginErr" class="muted" role="alert"></p>
+      <button type="submit" class="primary" data-i18n="action.signIn">Se connecter</button>
+      <button type="button" id="btnShowForgot" data-i18n="login.forgot">Mot de passe oublié ?</button>
+      <p class="muted login-hint" data-i18n-html="login.hint">Trois essais, puis le compte est verrouillé. Utilisez <strong>Mot de passe oublié</strong>, ou un administrateur peut le réinitialiser.</p>
+    </form>
+    <form id="forgotForm" class="login-card hidden">
+      <h1>Galerie Médias</h1>
+      <p class="muted login-version">Version 3.0</p>
+      <p class="muted" data-i18n="login.forgotLead">Indiquez le courriel du compte. S’il est connu, un lien valable une heure est envoyé.</p>
+      <label data-i18n="login.email">Courriel
+        <input id="forgotEmail" type="email" autocomplete="email" required>
+      </label>
+      <p id="forgotMsg" class="muted" role="status"></p>
+      <button type="submit" class="primary" data-i18n="login.sendLink">Envoyer le lien</button>
+      <button type="button" id="btnForgotBack" data-i18n="login.back">Retour à la connexion</button>
+    </form>
+    <form id="resetForm" class="login-card hidden">
+      <h1>Galerie Médias</h1>
+      <p class="muted login-version">Version 3.0</p>
+      <p class="muted" data-i18n="login.resetLead">Choisissez un nouveau mot de passe (8 caractères minimum).</p>
+      <label data-i18n="login.newPass">Nouveau mot de passe
+        <input id="resetPass" type="password" autocomplete="new-password" minlength="8" required>
+      </label>
+      <label data-i18n="login.confirmPass">Confirmer le mot de passe
+        <input id="resetPass2" type="password" autocomplete="new-password" minlength="8" required>
+      </label>
+      <p id="resetMsg" class="muted" role="alert"></p>
+      <button type="submit" class="primary" data-i18n="login.savePass">Enregistrer le mot de passe</button>
+      <button type="button" id="btnResetBack" data-i18n="login.back">Retour à la connexion</button>
+    </form>
+  </div>
+  <div class="chrome" id="chrome">
+  <header class="top">
+    <div class="brand">
+      <strong id="brandName">Galerie Médias</strong>
+      <span id="brandVersion">3.0</span>
+      <span id="status" class="muted">…</span>
+      <span id="whoami" class="muted hidden"></span>
+      <button type="button" id="btnLogout" class="hidden" data-i18n="action.signOut">Se déconnecter</button>
+    </div>
+    <nav class="tabs">
+      <button type="button" class="tab on" id="tabGallery" data-view="gallery" data-i18n="nav.photos">Photos</button>
+      <button type="button" class="tab admin-only" id="tabFaces" data-view="faces" data-i18n="nav.people">Personnes</button>
+      <button type="button" class="tab admin-only" id="tabScenes" data-view="scenes" data-i18n="nav.scenes">Scènes</button>
+      <button type="button" class="tab admin-only" id="tabCopies" data-view="copies" data-i18n="nav.duplicates">Doublons</button>
+      <button type="button" class="tab" id="tabMap" data-view="map" data-i18n="nav.map">Carte</button>
+      <button type="button" class="tab" id="tabAlbums" data-view="albums" data-i18n="nav.albums">Albums</button>
+      <button type="button" class="tab admin-only" id="tabTrash" data-view="trash" data-i18n="nav.trash">Corbeille</button>
+      <button type="button" class="tab admin-only" id="tabSettings" data-view="settings" data-i18n="nav.settings">Paramètres</button>
+      <button type="button" class="tab" id="tabHelp" title="Aide" aria-label="Aide" data-i18n-title="nav.helpTitle" data-i18n-aria="nav.helpTitle">?</button>
+    </nav>
+    <button type="button" class="chrome-toggle admin-only" id="btnToolsToggle" data-i18n="nav.tools">Outils</button>
+    <div class="tools admin-only" id="toolsPanel">
+      <label class="year-tool">Index
+        <select id="indexYear"></select>
+      </label>
+      <button type="button" id="btnIndex" data-i18n="tool.index">Indexer</button>
+      <button type="button" id="btnFaces" data-i18n="tool.faces" data-i18n-title="tool.facesTitle" title="Détecte les nouveaux visages, ou rattache ceux sans nom aux personnes déjà nommées">Détecter les personnes</button>
+      <button type="button" id="btnScenes" data-i18n="tool.scenes" data-i18n-title="tool.scenesTitle" title="Étiquettes plage, montagne, église…">Détecter les scènes</button>
+    </div>
+  </header>
+
+  <div id="jobbar" class="jobbar hidden">
+    <div id="jobbarText" class="jobbar-text"></div>
+    <div class="job-meter hidden" id="jobbarMeter"><div id="jobbarBar"></div></div>
+  </div>
+
+  <div id="galleryChrome" class="gallery-chrome">
+    <button type="button" class="chrome-toggle" id="btnFiltersToggle" data-i18n="filter.filters">Filtres</button>
+    <div class="filters" id="filtersPanel">
+      <div class="filter-row">
+      <label data-i18n="filter.year">Année
+        <select id="filterYear"></select>
+      </label>
+      <label data-i18n="filter.month">Mois
+        <select id="filterMonth">
+          <option value="" data-i18n="filter.all">Tous</option>
+          <option value="1" data-i18n="month.1">Janvier</option>
+          <option value="2" data-i18n="month.2">Février</option>
+          <option value="3" data-i18n="month.3">Mars</option>
+          <option value="4" data-i18n="month.4">Avril</option>
+          <option value="5" data-i18n="month.5">Mai</option>
+          <option value="6" data-i18n="month.6">Juin</option>
+          <option value="7" data-i18n="month.7">Juillet</option>
+          <option value="8" data-i18n="month.8">Août</option>
+          <option value="9" data-i18n="month.9">Septembre</option>
+          <option value="10" data-i18n="month.10">Octobre</option>
+          <option value="11" data-i18n="month.11">Novembre</option>
+          <option value="12" data-i18n="month.12">Décembre</option>
+        </select>
+      </label>
+      <label data-i18n="filter.place">Lieu
+        <select id="filterPlace"></select>
+      </label>
+      <label data-i18n="filter.moment">Moment
+        <select id="filterMoment"></select>
+      </label>
+      <label data-i18n="filter.type">Type
+        <select id="filterKind">
+          <option value="" data-i18n="filter.all">Tous</option>
+          <option value="photo" data-i18n="filter.photos">Photos</option>
+          <option value="video" data-i18n="filter.videos">Vidéos</option>
+        </select>
+      </label>
+      <label class="hidden" data-i18n="person.label">Personne
+        <input id="filterPersonQ" type="search" list="filterPersonList" data-i18n-placeholder="person.ph" placeholder="Tapez un prénom" autocomplete="off" spellcheck="false">
+        <input type="hidden" id="filterPerson" value="">
+      </label>
+      <label data-i18n="filter.album">Album
+        <select id="filterAlbum"></select>
+      </label>
+      <label data-i18n="filter.scene">Scène
+        <select id="filterScene"></select>
+      </label>
+      <input id="filterQ" type="search" data-i18n-placeholder="filter.searchPh" data-i18n-aria="filter.searchAria" placeholder="Fichier, lieu, moment ou prénom" aria-label="Recherche">
+      </div>
+    </div>
+    <div class="selection-row">
+      <button type="button" id="btnSelectPage" data-i18n="action.page" data-i18n-title="action.pageTitle" title="Sélectionnez uniquement les photos visibles">Cette page</button>
+      <button type="button" id="btnSelectAll" data-i18n="action.allFilter" data-i18n-title="action.allFilterTitle" title="Sélectionnez tous les fichiers de ce filtre, pas seulement cette page">Tout sélectionner</button>
+      <button type="button" id="btnClearSel" data-i18n="action.clear">Effacer la sélection</button>
+      <button type="button" id="btnAlbum" class="hidden admin-only" data-i18n="action.addAlbum">Ajouter à l’album</button>
+      <button type="button" id="btnAlbumRemove" class="hidden admin-only" data-i18n="action.removeAlbum">Retirer de l’album</button>
+      <button type="button" id="btnPlace" class="admin-only" data-i18n="action.place">Lieu</button>
+      <button type="button" id="btnMove" class="hidden admin-only" data-i18n="action.move">Déplacer</button>
+      <button type="button" id="btnExport" class="primary admin-only" data-i18n="action.export">Exporter</button>
+      <button type="button" id="btnDelete" class="admin-only" data-i18n="action.delete">Supprimer</button>
+      <button type="button" id="btnSlideshow" data-i18n="action.slideshow">Diaporama</button>
+      <button type="button" id="btnCast" data-i18n="action.cast" data-i18n-title="action.castTitle" title="Envoyer vers une télé LG ou Samsung (DLNA)">Télé</button>
+      </div>
+  </div>
+  </div>
+
+  <section id="view-help" class="view hidden" aria-labelledby="tabHelp">
+    <div id="helpMount"></div>
+  </section>
+
+  <section id="view-gallery" class="view">
+    <p id="count" class="count"></p>
+    <div id="grid" class="grid"></div>
+    <div class="pager">
+      <button type="button" id="btnPrev" data-i18n="action.prev">Précédent</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="btnNext" data-i18n="action.next">Suivant</button>
+    </div>
+  </section>
+
+  <section id="view-copies" class="view hidden">
+    <p class="lede" data-i18n="lede.duplicates">Même photo sous plusieurs fichiers. « Garder » est une suggestion. Vous pouvez mettre à la corbeille toutes les copies en trop, ou seulement celles cochées. Confirmation, puis 30 jours.</p>
+    <div class="face-toolbar">
+      <p id="copiesStats" class="muted"></p>
+      <button type="button" id="btnCopiesTrashAll" class="danger" data-i18n="copies.trashAll">Mettre toutes les copies en trop à la corbeille</button>
+      <button type="button" id="btnCopiesTrash" data-i18n="copies.trashChecked">Mettre les copies cochées à la corbeille</button>
+    </div>
+    <div id="copiesList" class="copies-list"></div>
+    <div class="pager">
+      <button type="button" id="btnCopiesPrev" data-i18n="action.prev">Précédent</button>
+      <span id="copiesPage"></span>
+      <button type="button" id="btnCopiesNext" data-i18n="action.next">Suivant</button>
+    </div>
+  </section>
+
+  <section id="view-map" class="view hidden">
+    <p class="lede" data-i18n-html="lede.map">Carte des lieux. Cliquez une pastille pour ouvrir les photos. Les voyages sont dans le filtre <strong>Moment</strong>. Les fonds de carte viennent d’Internet (OpenStreetMap).</p>
+    <p id="mapStats" class="count"></p>
+    <div id="mapCanvas"></div>
+    <div id="mapUnknown" class="map-unknown"></div>
+  </section>
+
+  <section id="view-albums" class="view hidden">
+    <p class="lede" data-i18n-html="lede.albums">Des listes, sans recopier les fichiers. Une photo peut être dans plusieurs albums. L’étoile ajoute ou retire. <strong>Favoris</strong> est un album.</p>
+    <form id="albumCreate" class="album-create admin-only">
+      <input id="albumName" type="text" required maxlength="80" data-i18n-placeholder="album.createPh" placeholder="Nom de l’album">
+      <button type="submit" class="primary" data-i18n="action.create">Créer</button>
+    </form>
+    <p id="albumMsg" class="muted"></p>
+    <div id="albumGrid" class="album-grid"></div>
+  </section>
+
+  <section id="view-trash" class="view hidden">
+    <p class="lede" data-i18n-html="lede.trash">Les photos supprimées restent ici <strong>30 jours</strong>, puis le site les efface. Restaurer et Supprimer définitivement ne concernent que la sélection.</p>
+    <div class="filters">
+      <div class="selection-row">
+      <button type="button" id="btnTrashPage" data-i18n="action.page" data-i18n-title="action.pageTitle" title="Sélectionnez uniquement les photos visibles">Cette page</button>
+      <button type="button" id="btnTrashAll" data-i18n="trash.all" data-i18n-title="trash.allTitle" title="Sélectionnez tous les fichiers de la corbeille">Tout</button>
+      <button type="button" id="btnTrashClear" data-i18n="action.clear">Effacer la sélection</button>
+      <button type="button" id="btnTrashRestore" data-i18n="trash.restore" disabled>Restaurer la sélection</button>
+      <button type="button" id="btnTrashPurge" class="danger" data-i18n="trash.purge" disabled>Supprimer définitivement</button>
+      </div>
+    </div>
+    <p id="trashCount" class="count"></p>
+    <div id="trashGrid" class="grid"></div>
+    <div class="pager">
+      <button type="button" id="btnTrashPrev" data-i18n="action.prev">Précédent</button>
+      <span id="trashPageInfo"></span>
+      <button type="button" id="btnTrashNext" data-i18n="action.next">Suivant</button>
+    </div>
+  </section>
+
+  <section id="view-settings" class="view hidden">
+    <form id="settingsForm" class="settings-form">
+      <p class="muted" id="appVersion">Galerie Médias 3.0</p>
+      <div id="cfgProgress" class="job-progress hidden">
+        <p id="cfgProgressTitle" class="job-progress-title"></p>
+        <div class="job-meter hidden" id="cfgProgressMeter"><div id="cfgProgressBar"></div></div>
+        <p id="cfgProgressDetail" class="muted"></p>
+      </div>
+      <p class="muted hidden" id="usbHint" data-i18n-html="set.usb">Les <strong>photos</strong> peuvent rester sur un disque USB. La <strong>base</strong> (index, visages, miniatures) est enregistrée sur cet ordinateur, pas sur le USB. C’est plus fiable si vous débranchez le disque. Sous Windows, indiquez par exemple <code>E:\Photos</code>. Si la lettre change, double-cliquez sur <code>lister-disques.bat</code>, mettez à jour ce chemin, puis enregistrez.</p>
+      <p class="muted" data-i18n="settings.phoneHome">iPhone : même Wi-Fi. À la maison : https://photos.example.com:8765. Premier passage : continuer vers le site si le navigateur le demande. Réglages iPhone → Confidentialité → Réseau local → autoriser Safari. Puis Partager → Sur l’écran d’accueil.</p>
+      <fieldset>
+        <legend data-i18n="settings.phone">Téléphone</legend>
+        <p class="muted" data-i18n="settings.phoneLead">Le site reste sur cet ordinateur. Choisissez d’où viennent les photos à télécharger.</p>
+        <div class="phone-kind">
+          <label data-i18n="phone.iphone"><input type="radio" name="phoneKind" value="iphone" id="cfgPhoneIphone" checked> iPhone / iCloud</label>
+          <label data-i18n="phone.android"><input type="radio" name="phoneKind" value="android" id="cfgPhoneAndroid"> Android / Google Photos</label>
+          <label data-i18n="phone.facebook"><input type="radio" name="phoneKind" value="facebook" id="cfgPhoneFacebook"> Facebook / Messenger</label>
+        </div>
+      </fieldset>
+      <fieldset id="secIcloud">
+        <legend data-i18n="settings.icloud">iCloud</legend>
+        <p class="muted" data-i18n-html="set.icloudLead">Cette section sert uniquement à <strong>télécharger</strong> les photos et les vidéos encore stockées dans iCloud (Photothèque iCloud). Les fichiers arrivent dans le dossier de triage. Le classement par année et lieu se fait dans la section <strong>Classer</strong>, plus bas. Le bouton <strong>Exécuter le téléchargement</strong> ne lance que ce téléchargement : il n’enregistre pas le reste de la page.</p>
+        <label data-i18n="set.triage">Dossier de triage (destination du téléchargement)
+          <input id="cfgTriage" type="text" spellcheck="false" data-i18n-placeholder="set.triagePh" placeholder="/mnt/nas-triage/icloud ou D:\Photos\triage">
+        </label>
+        <p class="muted" data-i18n="set.triageRole">Le dossier de triage est une zone d’arrivée, pas la galerie. Les photos y restent jusqu’au classement. Exemple après un téléchargement : 2024/06/IMG_1234.HEIC. Elles apparaissent dans Photos seulement après Classer, puis Indexer.</p>
+        <label data-i18n="set.appleId">Apple ID
+          <input id="cfgAppleId" type="email" autocomplete="username" data-i18n-placeholder="set.applePh" placeholder="prenom@icloud.com">
+        </label>
+        <label data-i18n="settings.smtpPass">Mot de passe
+          <input id="cfgApplePassword" type="password" autocomplete="new-password" data-i18n-placeholder="settings.icloudPh" placeholder="mot de passe iCloud">
+        </label>
+        <p id="cfgPasswordHint" class="muted"></p>
+        <div class="icloud-run">
+          <label data-i18n="filter.year">Année
+            <input id="cfgIcloudYear" type="number" min="2000" max="2035" step="1">
+          </label>
+          <label data-i18n="filter.month">Mois
+            <select id="cfgIcloudMonth">
+              <option value="" data-i18n="month.year">Toute l’année</option>
+              <option value="1" data-i18n="month.1">Janvier</option>
+              <option value="2" data-i18n="month.2">Février</option>
+              <option value="3" data-i18n="month.3">Mars</option>
+              <option value="4" data-i18n="month.4">Avril</option>
+              <option value="5" data-i18n="month.5">Mai</option>
+              <option value="6" data-i18n="month.6">Juin</option>
+              <option value="7" data-i18n="month.7">Juillet</option>
+              <option value="8" data-i18n="month.8">Août</option>
+              <option value="9" data-i18n="month.9">Septembre</option>
+              <option value="10" data-i18n="month.10">Octobre</option>
+              <option value="11" data-i18n="month.11">Novembre</option>
+              <option value="12" data-i18n="month.12">Décembre</option>
+            </select>
+          </label>
+          <button type="button" class="primary" id="btnIcloudExec" data-i18n="set.download">Exécuter le téléchargement</button>
+        </div>
+        <p class="muted" data-i18n="set.progress">L’avancement s’affiche en bandeau en haut de la page, et dans le cadre en haut de Paramètres (nombre de fichiers reçus).</p>
+        <div id="cfgMfaBox" class="mfa-box hidden">
+          <p data-i18n-html="set.mfa"><strong>Code 2FA</strong> — Apple l’affiche sur l’iPhone ou l’iPad (notification). Saisissez-le ici, pas dans le terminal.</p>
+          <div class="mfa-row">
+            <input id="cfgMfaCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456">
+            <button type="button" class="primary" id="btnMfa" data-i18n="set.mfaBtn">Valider le code</button>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset id="secGoogle" class="hidden">
+        <legend data-i18n="settings.google">Google Photos</legend>
+        <p class="muted" data-i18n="set.googleLead">Google n’offre plus d’outil fiable du type iCloud pour tout télécharger automatiquement. Deux façons simples :</p>
+        <ol class="muted howto">
+          <li data-i18n-html="set.takeout"><strong>Takeout</strong> — sur un ordinateur : takeout.google.com → Google Photos → exporter → décompresser le zip.</li>
+          <li data-i18n-html="set.cable"><strong>Câble</strong> — branchez le téléphone, copiez le dossier DCIM (et éventuellement Pictures).</li>
+        </ol>
+        <label data-i18n="set.googleDir">Dossier Takeout / DCIM / copies
+          <input id="cfgGoogleDir" type="text" spellcheck="false" data-i18n-placeholder="set.googlePh" placeholder="C:\Users\moi\Downloads\Takeout ou /home/moi/Photos/Google">
+        </label>
+        <p class="muted" data-i18n="set.androidNote">En mode Android, le téléchargement iCloud n’est pas utilisé. Le classement se fait dans la section Classer.</p>
+      </fieldset>
+      <fieldset id="secFacebook" class="hidden">
+        <legend data-i18n="settings.facebook">Facebook</legend>
+        <p class="muted" data-i18n-html="set.facebookLead">Vous pouvez télécharger vos photos et vos vidéos depuis Facebook. Dans Facebook : <strong>Paramètres et confidentialité</strong>, puis <strong>Vos informations</strong>, puis <strong>Télécharger vos informations</strong>. Demandez les photos, les vidéos et les messages. Décompressez l’archive dans le dossier ci-dessous, enregistrez, puis <strong>Classer depuis Facebook</strong>. La date vient du fichier message_1.json, car ces médias n’ont souvent pas de date dans la photo.</p>
+        <pre class="example-tree" data-i18n="set.facebookExample">Archive téléchargée :
+  facebook/messages/inbox/Nom/photos/12345.jpg
+  facebook/messages/inbox/Nom/message_1.json
+
+Après le classement :
+  Annee 2019/Mars 2019/12345.jpg
+  Annee 2019/Montreal/12345.jpg    s’il y a une position</pre>
+        <label data-i18n="set.facebookDir">Dossier de l’archive Facebook
+          <input id="cfgFacebookDir" type="text" spellcheck="false" data-i18n-placeholder="set.facebookPh" placeholder="/mnt/nas-triage/facebook ou D:\Photos\facebook">
+        </label>
+      </fieldset>
+      <fieldset id="secClasser">
+        <legend data-i18n="settings.organize">Classer</legend>
+        <p class="muted" data-i18n-html="set.organizeLead">Cette section <strong>range</strong> les photos dans la bibliothèque. Le dossier de triage est une zone d’arrivée : ce n’est pas encore la galerie. <strong>Simuler</strong> n’écrit rien. Après un classement réel, cliquez <strong>Indexer</strong>. Les noms <strong>Annee</strong> et les mois en français (Juin, Juillet) sont les noms des dossiers sur le disque : ils ne changent pas avec la langue du site.</p>
+        <pre class="example-tree" data-i18n="set.organizeExample">Dossier de triage, après un téléchargement :
+  2024/06/IMG_1234.HEIC
+
+Après « Classer année / mois » :
+  Annee 2024/Juin 2024/IMG_1234.HEIC
+
+Après « Classer la bibliothèque actuelle », s’il y a une position :
+  Annee 2024/Rome/IMG_1234.HEIC
+
+Sans position, le fichier reste dans Annee 2024/Juin 2024/.</pre>
+        <label data-i18n="set.libNow">Bibliothèque actuelle
+          <input id="cfgLibrarySrc" type="text" spellcheck="false" data-i18n-placeholder="set.libPh" placeholder="~/Photos ou D:\Photos">
+        </label>
+        <label data-i18n="set.libNew">Nouvel emplacement de la bibliothèque
+          <input id="cfgLibraryDest" type="text" spellcheck="false" data-i18n-placeholder="set.destPh" placeholder="Dossier de la galerie classée, souvent sur le disque USB (ex. E:\Photos)">
+        </label>
+        <p class="muted" id="classerSourceHint" data-i18n="organize.hintIcloud">Le classement depuis le triage utilise le dossier indiqué dans iCloud.</p>
+        <div class="sort-actions">
+          <button type="button" id="btnSortDry" data-i18n="organize.simulate">Simuler le classement</button>
+          <button type="button" class="primary" id="btnSortApply" data-i18n="organize.fromTriage">Classer depuis le triage</button>
+          <button type="button" class="primary" id="btnSortLibrary" data-i18n="organize.library">Classer la bibliothèque actuelle</button>
+        </div>
+        <div class="sort-actions">
+          <button type="button" id="btnSortMonthsDry" data-i18n="organize.simulateMonths">Simuler année / mois</button>
+          <button type="button" class="primary" id="btnSortMonths" data-i18n="organize.months">Classer année / mois</button>
+        </div>
+        <p class="muted" data-i18n="set.organizeNote">L’avancement s’affiche comme le téléchargement (bandeau et cadre Paramètres). « Classer la bibliothèque actuelle » ne touche pas au dossier de triage : villes GPS seulement. « Classer année / mois » range vers Annee/Mois (copie, ou déplacement si la source et la destination sont le même dossier). Ensuite, classez la bibliothèque pour les villes.</p>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="settings.backup">Sauvegarde</legend>
+        <p class="muted" data-i18n-html="set.backupLead">Copie la base (index, visages nommés), les réglages, et le <strong>site</strong> (pages HTML, CSS, JS, code Python, sans Python/.venv). Les miniatures se régénèrent avec Indexer. La destination peut être un disque USB ou un NAS. Les <strong>4</strong> plus récentes sont conservées. Sur l’ordinateur principal, un minuteur peut lancer cela le mercredi ; chez vous, cliquez sur le bouton.</p>
+        <label data-i18n="backup.dir">Dossier des sauvegardes
+          <input id="cfgBackupDir" type="text" spellcheck="false" placeholder="~/Photos ou D:\Photos">
+        </label>
+        <div class="sort-actions">
+          <button type="button" class="primary" id="btnBackup" data-i18n="backup.now">Sauvegarder maintenant</button>
+        </div>
+        <p id="backupList" class="muted"></p>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="settings.mail">Courriel</legend>
+        <p class="muted" data-i18n="settings.mailLead">Un seul compte envoie les liens. Exemple Gmail : serveur smtp.gmail.com, port 587, identifiant et expéditeur john.doe@gmail.com, STARTTLS coché. Le mot de passe est un mot de passe d’application (16 lettres) : les espaces sont retirés. Ce n’est pas le courriel de chaque personne. L’adresse du site, par exemple https://photos.example.com:8765, est celle du lien.</p>
+        <label data-i18n="settings.smtpHost">Serveur
+          <input id="cfgSmtpHost" type="text" spellcheck="false" autocomplete="off" placeholder="smtp.gmail.com">
+        </label>
+        <label data-i18n="settings.smtpPort">Port
+          <input id="cfgSmtpPort" type="text" inputmode="numeric" spellcheck="false" autocomplete="off" placeholder="587">
+        </label>
+        <label data-i18n="settings.smtpUser">Identifiant
+          <input id="cfgSmtpUser" type="text" spellcheck="false" autocomplete="off" placeholder="john.doe@gmail.com">
+        </label>
+        <label data-i18n="settings.smtpPass">Mot de passe
+          <input id="cfgSmtpPassword" type="password" autocomplete="new-password" placeholder="">
+        </label>
+        <label data-i18n="settings.smtpFrom">Expéditeur
+          <input id="cfgSmtpFrom" type="email" spellcheck="false" autocomplete="off" placeholder="john.doe@gmail.com">
+        </label>
+        <label class="check-line">
+          <input type="checkbox" id="cfgSmtpTls" checked>
+          <span data-i18n="settings.smtpTls">Chiffrement STARTTLS</span>
+        </label>
+        <label data-i18n="settings.publicUrl">Adresse du site
+          <input id="cfgPublicUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://photos.example.com:8765">
+        </label>
+      </fieldset>
+      <fieldset id="secAccounts">
+        <legend data-i18n="settings.accounts">Comptes</legend>
+        <p class="muted" data-i18n-html="settings.accountsLead">Sans compte, le site reste ouvert. Le premier compte est administrateur. Mot de passe : 8 caractères minimum. Trois essais, puis le compte est verrouillé. Le courriel est obligatoire : c’est la boîte de cette personne (exemple marie.martin@gmail.com), celle qu’elle écrit dans <strong>Mot de passe oublié</strong>. Le bouton Enregistrer à côté du compte la sauvegarde. Deux comptes ne partagent pas la même adresse. Un compte <strong>lecture</strong> voit les photos, la carte et les albums.</p>
+        <div class="sort-actions">
+          <input id="newUserName" type="text" data-i18n-placeholder="accounts.userPh" placeholder="identifiant" autocomplete="off">
+          <input id="newUserEmail" type="email" data-i18n-placeholder="accounts.emailPh" placeholder="marie.martin@gmail.com" autocomplete="off">
+          <input id="newUserPass" type="password" data-i18n-placeholder="accounts.passPh" placeholder="mot de passe (8+)" autocomplete="new-password" minlength="8">
+          <select id="newUserRole">
+            <option value="viewer" data-i18n="role.viewer">Lecture</option>
+            <option value="admin" data-i18n="role.admin">Admin</option>
+          </select>
+          <button type="button" id="btnAddUser" class="primary" data-i18n="action.add">Ajouter</button>
+        </div>
+        <p id="usersMsg" class="muted"></p>
+        <ul id="usersList" class="users-list muted"></ul>
+      </fieldset>
+      <p id="cfgMsg" class="muted"></p>
+      <p class="muted" data-i18n="settings.saveNote">Ce bouton enregistre les paramètres de cette page, y compris l’envoi des courriels. Il n’enregistre pas le courriel de chaque compte : ce courriel a son bouton Enregistrer, sur la même ligne. Il ne lance ni le téléchargement, ni le classement, ni la sauvegarde.</p>
+      <button type="submit" class="primary" data-i18n="settings.saveAll">Enregistrer</button>
+    </form>
+  </section>
+
+  <section id="view-scenes" class="view hidden">
+    <p class="lede" data-i18n-html="lede.scenes">Cochez seulement les photos justes, puis étiquetez la sélection (église, montagne, ville…). <strong>Revoir</strong> sert à retirer les erreurs.</p>
+    <div class="face-toolbar">
+      <p id="sceneStats" class="muted"></p>
+      <label class="year-tool" data-i18n="filter.year">Année
+        <select id="sceneYear"></select>
+      </label>
+      <label class="year-tool" data-i18n="filter.place">Lieu
+        <select id="scenePlace"></select>
+      </label>
+      <button type="button" class="primary" id="btnScenesPage" data-i18n="scenes.detect">Détecter les scènes</button>
+    </div>
+    <div id="sceneChips" class="people"></div>
+    <div id="sceneReview" class="face-review hidden"></div>
+    <div id="sceneClusters" class="clusters"></div>
+  </section>
+
+  <section id="view-faces" class="view hidden">
+    <p class="lede" data-i18n-html="lede.faces">Cochez seulement les visages que vous reconnaissez, puis nommez la sélection. <strong>Revoir</strong> puis <strong>Pas…</strong> retire une erreur. En grand format, la touche X retire le visage.</p>
+    <div class="face-toolbar">
+      <p id="faceStats" class="muted"></p>
+      <button type="button" class="primary" id="btnFacesPage" data-i18n="faces.attach">Rattacher aux personnes nommées</button>
+    </div>
+    <div class="merge-box hidden" id="mergeBox">
+      <label data-i18n="faces.merge">Fusionner
+        <select id="mergeAbsorb"></select>
+      </label>
+      <span class="muted" data-i18n="faces.into">dans</span>
+      <select id="mergeKeep"></select>
+      <button type="button" id="btnMerge" data-i18n="faces.mergeBtn">Fusionner les prénoms</button>
+    </div>
+    <div id="peopleList" class="people"></div>
+    <div id="faceReview" class="face-review hidden"></div>
+    <div id="clusters" class="clusters"></div>
+  </section>
+
+  <dialog id="lightbox">
+      <div class="lb-inner" id="lbInner">
+      <button type="button" class="lb-close" id="lbClose" data-i18n="lb.close">Fermer</button>
+      <button type="button" class="lb-arrow left" id="lbPrev" data-i18n-aria="lb.prev" aria-label="Photo précédente">‹</button>
+      <button type="button" class="lb-arrow right" id="lbNext" data-i18n-aria="lb.next" aria-label="Photo suivante">›</button>
+      <div class="lb-frame">
+        <div id="lbStage" class="lb-stage"></div>
+        <div id="lbTags" class="lb-tags"></div>
+      </div>
+      <div class="lb-meta">
+        <div id="lbCaption"></div>
+        <div class="lb-nav" id="lbNavView">
+          <button type="button" id="lbPlay" data-i18n="action.slideshow">Diaporama</button>
+          <button type="button" id="lbCast" data-i18n="action.cast" data-i18n-title="action.castTitle" title="Envoyer vers une télé LG ou Samsung (DLNA)">Télé</button>
+          <button type="button" id="lbFull" data-i18n="lb.full">Plein écran</button>
+          <button type="button" id="lbEdit" class="admin-only" data-i18n="lb.edit">Pivoter / rogner</button>
+          <label class="delay-tool" data-i18n="lb.pause">Pause
+            <select id="lbDelay">
+              <option value="3000">3 s</option>
+              <option value="5000" selected>5 s</option>
+              <option value="8000">8 s</option>
+            </select>
+          </label>
+          <button type="button" id="lbShare" data-i18n="share.button" data-i18n-title="share.buttonTitle" title="Envoyez cette photo ou cette vidéo vers Facebook, Messenger, Instagram ou TikTok">Partager</button>
+          <a id="lbOrig" href="#" download data-i18n="lb.original">Original</a>
+        </div>
+        <div class="lb-nav hidden" id="lbNavEdit">
+          <button type="button" id="lbRotLeft" data-i18n-title="lb.rotLeft" title="Pivoter à gauche">↺ 90°</button>
+          <button type="button" id="lbRotRight" data-i18n-title="lb.rotRight" title="Pivoter à droite">↻ 90°</button>
+          <button type="button" id="lbCrop" data-i18n="lb.crop">Rogner</button>
+          <button type="button" id="lbEditCancel" data-i18n="action.cancel">Annuler</button>
+          <button type="button" class="primary" id="lbEditSave" data-i18n="action.save">Enregistrer</button>
+          <span id="lbEditMsg" class="muted"></span>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  <datalist id="peopleNames"></datalist>
+  <datalist id="filterPersonList"></datalist>
+
+  <dialog id="exportDlg">
+    <form id="exportForm" method="dialog" class="export-form">
+      <h2 data-i18n="dlg.export">Exporter la sélection</h2>
+      <p id="exportCount" class="muted"></p>
+      <label data-i18n="dlg.exportDest">Dossier de destination
+        <input id="exportDest" type="text" spellcheck="false" placeholder="/home/…/Downloads/photo-export">
+      </label>
+      <menu>
+        <button type="submit" value="copy" id="exportCopy" data-i18n="dlg.copy">Copier les originaux</button>
+        <button type="submit" value="zip" id="exportZip" data-i18n="dlg.zip">Télécharger un fichier zip</button>
+        <button type="submit" value="cancel" data-i18n="action.cancel">Annuler</button>
+      </menu>
+      <p id="exportMsg" class="muted"></p>
+    </form>
+  </dialog>
+  <dialog id="albumDlg">
+    <form id="albumForm" method="dialog" class="export-form">
+      <h2 id="albumDlgTitle" data-i18n="dlg.albums">Albums</h2>
+      <p id="albumDlgCount" class="muted"></p>
+      <p id="albumDlgEmpty" class="muted hidden" data-i18n="dlg.albumEmpty">Aucun album pour l’instant. Saisissez un nom ci-dessous pour en créer un.</p>
+      <label id="albumPickLabel" data-i18n="dlg.albumPick">Albums (plusieurs possibles)
+        <select id="albumPick" multiple size="6"></select>
+      </label>
+      <p id="albumPickHint" class="muted" data-i18n="dlg.albumHint">Cochez un ou plusieurs albums, puis Ajouter ou Retirer.</p>
+      <label data-i18n="dlg.albumNew">Nouvel album
+        <input id="albumNew" type="text" maxlength="80" data-i18n-placeholder="dlg.albumPh" placeholder="Canada, mariage, à imprimer…">
+      </label>
+      <menu>
+        <button type="submit" value="cancel" data-i18n="action.cancel">Annuler</button>
+        <button type="submit" value="remove" id="albumRemove" data-i18n="action.remove">Retirer</button>
+        <button type="submit" value="add" class="primary" id="albumConfirm" data-i18n="action.add">Ajouter</button>
+      </menu>
+      <p id="albumDlgMsg" class="muted"></p>
+    </form>
+  </dialog>
+  <dialog id="shareDlg">
+    <form method="dialog" class="export-form" id="shareForm">
+      <h2 data-i18n="share.title">Partager</h2>
+      <p class="muted" data-i18n="share.lead">Le fichier part vers l’application que vous choisissez. Ces réseaux ne lisent pas le site : vous envoyez la photo ou la vidéo elle-même.</p>
+      <div id="shareNets" class="share-nets">
+        <button type="button" data-share="facebook" data-i18n-aria="share.facebook" data-i18n-title="share.facebook" aria-label="Facebook" title="Facebook" disabled>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#0866FF"/><path fill="#fff" d="M26.6 38V26.2h3.7l.6-4.3h-4.3v-2.8c0-1.2.3-2 2.1-2H31V13c-.4 0-1.7-.2-3.2-.2-3.2 0-5.4 2-5.4 5.6v3.5h-3.6v4.3h3.6V38h3.2z"/></svg>
+        </button>
+        <button type="button" data-share="messenger" data-i18n-aria="share.messenger" data-i18n-title="share.messenger" aria-label="Messenger" title="Messenger" disabled>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="shareGradMsg" x1="6" y1="46" x2="44" y2="4" gradientUnits="userSpaceOnUse"><stop stop-color="#00C6FF"/><stop offset=".45" stop-color="#0068FF"/><stop offset="1" stop-color="#B429FF"/></linearGradient></defs><circle cx="24" cy="24" r="24" fill="url(#shareGradMsg)"/><path fill="#fff" d="M24 9.2c-7.4 0-13.4 5.5-13.4 12.3 0 3.9 1.9 7.3 5 9.6v4.1l4.6-2.5c1.2.3 2.5.5 3.8.5 7.4 0 13.4-5.5 13.4-12.3S31.4 9.2 24 9.2zm1.3 16.6-3.4-3.6-6.7 3.6 7.3-7.8 3.5 3.6 6.6-3.6-7.3 7.8z"/></svg>
+        </button>
+        <button type="button" data-share="instagram" data-i18n-aria="share.instagram" data-i18n-title="share.instagram" aria-label="Instagram" title="Instagram" disabled>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><defs><radialGradient id="shareGradIg" cx="30%" cy="108%" r="130%"><stop offset="0" stop-color="#f9ce34"/><stop offset=".45" stop-color="#ee2a7b"/><stop offset="1" stop-color="#6228d7"/></radialGradient></defs><rect width="48" height="48" rx="13" fill="url(#shareGradIg)"/><rect x="13" y="13" width="22" height="22" rx="6.5" fill="none" stroke="#fff" stroke-width="2.3"/><circle cx="24" cy="24" r="5.4" fill="none" stroke="#fff" stroke-width="2.3"/><circle cx="31.2" cy="16.7" r="1.5" fill="#fff"/></svg>
+        </button>
+        <button type="button" data-share="tiktok" data-i18n-aria="share.tiktok" data-i18n-title="share.tiktok" aria-label="TikTok" title="TikTok" disabled>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#111"/><g transform="translate(13.2 11.4)"><path fill="#25F4EE" transform="translate(-1.15 .95)" d="M16.5 5.2A3.9 3.9 0 0 1 13.4 1.7V1.2h-2.8v11.1a2.3 2.3 0 0 1-2.3 2 2.3 2.3 0 0 1-2.4-2.3 2.3 2.3 0 0 1 2.4-2.4c.2 0 .4 0 .6.1V7.1a5.1 5.1 0 0 0-.6 0 5.1 5.1 0 0 0-5.1 5.2 5.1 5.1 0 0 0 5.1 5.1 5.1 5.1 0 0 0 5.1-5.1V6.8a6.6 6.6 0 0 0 3.8 1.2V5.6a3.9 3.9 0 0 1-.7-.4z"/><path fill="#FE2C55" transform="translate(1.15 -.95)" d="M16.5 5.2A3.9 3.9 0 0 1 13.4 1.7V1.2h-2.8v11.1a2.3 2.3 0 0 1-2.3 2 2.3 2.3 0 0 1-2.4-2.3 2.3 2.3 0 0 1 2.4-2.4c.2 0 .4 0 .6.1V7.1a5.1 5.1 0 0 0-.6 0 5.1 5.1 0 0 0-5.1 5.2 5.1 5.1 0 0 0 5.1 5.1 5.1 5.1 0 0 0 5.1-5.1V6.8a6.6 6.6 0 0 0 3.8 1.2V5.6a3.9 3.9 0 0 1-.7-.4z"/><path fill="#fff" d="M16.5 5.2A3.9 3.9 0 0 1 13.4 1.7V1.2h-2.8v11.1a2.3 2.3 0 0 1-2.3 2 2.3 2.3 0 0 1-2.4-2.3 2.3 2.3 0 0 1 2.4-2.4c.2 0 .4 0 .6.1V7.1a5.1 5.1 0 0 0-.6 0 5.1 5.1 0 0 0-5.1 5.2 5.1 5.1 0 0 0 5.1 5.1 5.1 5.1 0 0 0 5.1-5.1V6.8a6.6 6.6 0 0 0 3.8 1.2V5.6a3.9 3.9 0 0 1-.7-.4z"/></g></svg>
+        </button>
+      </div>
+      <p id="shareMsg" class="muted" data-i18n="share.preparing">Préparation du fichier…</p>
+      <menu>
+        <button type="submit" value="cancel" data-i18n="action.close">Fermer</button>
+      </menu>
+    </form>
+  </dialog>
+  <dialog id="castDlg">
+    <form method="dialog" class="export-form" id="castForm">
+      <h2 data-i18n="dlg.cast">Télévision</h2>
+      <p class="muted" data-i18n="dlg.castLead">Même réseau, télé allumée. Recherchez la télé, puis touchez son nom.</p>
+      <div id="castList" class="cast-list"></div>
+      <p id="castMsg" class="muted"></p>
+      <menu>
+        <button type="button" id="castRefresh" data-i18n="action.search">Rechercher</button>
+        <button type="button" id="castStop" data-i18n="action.stopTv">Arrêter la télé</button>
+        <button type="submit" value="cancel" data-i18n="action.close">Fermer</button>
+      </menu>
+    </form>
+  </dialog>
+  <dialog id="needSelDlg">
+    <form method="dialog" class="export-form">
+      <h2 id="needSelTitle" data-i18n="dlg.need">Sélection requise</h2>
+      <p id="needSelText" data-i18n="dlg.needText">Sélectionnez une ou plusieurs photos, puis réessayez.</p>
+      <menu>
+        <button type="submit" value="ok" class="primary">OK</button>
+      </menu>
+    </form>
+  </dialog>
+  <dialog id="placeDlg">
+    <form id="placeForm" method="dialog" class="export-form place-form">
+      <h2 data-i18n="dlg.place">Modifier le lieu</h2>
+      <p id="placeDlgCount" class="muted"></p>
+      <p class="muted" data-i18n="dlg.placeLead">Glissez la carte : la pastille reste au centre et le nom du lieu se met à jour. Le dossier sur le disque ne change pas.</p>
+      <label data-i18n="filter.place">Lieu
+        <input id="placeNew" type="text" maxlength="80" list="placeSuggestions" data-i18n-placeholder="place.ph" placeholder="San Jose Californie, Rome, Montréal…">
+        <datalist id="placeSuggestions"></datalist>
+      </label>
+      <div id="placePickHits" class="place-hits"></div>
+      <div class="place-map-wrap">
+        <div id="placePickMap"></div>
+        <div class="place-cross" aria-hidden="true"></div>
+      </div>
+      <p id="placePickHint" class="muted"></p>
+      <label class="check-line">
+        <input type="checkbox" id="placeFolder">
+        <span data-i18n="dlg.placeFolder">Corriger aussi les autres photos de ce dossier uniquement</span>
+      </label>
+      <menu>
+        <button type="submit" value="cancel" data-i18n="action.cancel">Annuler</button>
+        <button type="submit" value="save" class="primary" data-i18n="action.save">Enregistrer</button>
+      </menu>
+      <p id="placeDlgMsg" class="muted"></p>
+    </form>
+  </dialog>
+  <dialog id="moveDlg">
+    <form id="moveForm" method="dialog" class="export-form">
+      <h2 data-i18n="dlg.move">Déplacer la sélection</h2>
+      <p id="moveCount" class="muted"></p>
+      <p class="muted" data-i18n="dlg.moveLead">Le fichier quitte son dossier. La vidéo du même nom part avec. Seulement un dossier déjà présent dans la même année.</p>
+      <label data-i18n="dlg.filter">Filtrer
+        <input id="moveFilter" type="search" data-i18n-placeholder="move.filterPh" placeholder="mariage, Rome…" autocomplete="off">
+      </label>
+      <label data-i18n="dlg.folder">Dossier
+        <select id="moveDest" size="10"></select>
+      </label>
+      <menu>
+        <button type="button" id="moveCancel" data-i18n="action.cancel">Annuler</button>
+        <button type="submit" value="move" class="primary" id="moveConfirm" data-i18n="dlg.moveHere">Déplacer ici</button>
+      </menu>
+      <p id="moveMsg" class="muted"></p>
+    </form>
+  </dialog>
+  <dialog id="deleteDlg">
+    <form id="deleteForm" method="dialog" class="export-form">
+      <h2 data-i18n="dlg.delete">Supprimer la sélection</h2>
+      <p id="deleteQuestion"></p>
+      <p id="deleteHint" class="muted" data-i18n="dlg.deleteHint">Les fichiers iront à la corbeille (30 jours). Vous pourrez les restaurer. L’effacement définitif se fait dans Corbeille.</p>
+      <menu>
+        <button type="submit" value="cancel" data-i18n="action.cancel">Annuler</button>
+        <button type="submit" value="clear" id="deleteClearSel" class="hidden" data-i18n="action.clear">Effacer la sélection</button>
+        <button type="submit" value="page" id="deletePageOnly" class="hidden" data-i18n="dlg.deletePage">Supprimer cette page</button>
+        <button type="submit" value="confirm" class="danger" id="deleteConfirm" data-i18n="action.delete">Supprimer</button>
+      </menu>
+      <p id="deleteMsg" class="muted"></p>
+    </form>
+  </dialog>
+
+  <script src="/static/vendor/leaflet/leaflet.js"></script>
+  <script src="/static/i18n.js?v=13"></script>
+  <script src="/static/app.js?v=104"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installation — Galerie Médias</title>
+  <link rel="stylesheet" href="../styles.css?v=79">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+</head>
+<body class="help-standalone">
+  <header class="help-bar">
+    <a class="help-back" href="/">Retour à la galerie</a>
+    <nav class="help-langs" aria-label="Langue">
+      <a href="fr.html" hreflang="fr" lang="fr" title="Français" aria-label="Français" aria-current="page"><img class="flag" alt="" src="/static/flags/fr.svg"></a>
+      <a href="en.html" hreflang="en" lang="en" title="English" aria-label="English"><img class="flag" alt="" src="/static/flags/gb.svg"></a>
+      <a href="es.html" hreflang="es" lang="es" title="Español" aria-label="Español"><img class="flag" alt="" src="/static/flags/es.svg"></a>
+      <a href="de.html" hreflang="de" lang="de" title="Deutsch" aria-label="Deutsch"><img class="flag" alt="" src="/static/flags/de.svg"></a>
+    </nav>
+  </header>
+  <article class="help-doc">
+    <h1>Installation</h1>
+    <p>Galerie Médias, version 3.0. Le site reste sur votre ordinateur. Les photos peuvent rester sur un disque USB. La base (SQLite, miniatures, réglages) reste toujours sur l’ordinateur, jamais sur le USB. Le site n’écoute qu’en HTTPS.</p>
+    <p>La même notice existe en <a href="en.html" hreflang="en">anglais</a>, en <a href="es.html" hreflang="es">espagnol</a> et en <a href="de.html" hreflang="de">allemand</a>. Le mode d’emploi des menus est dans l’aide <strong>?</strong>.</p>
+
+    <h2>Où sont les fichiers</h2>
+    <ul>
+      <li><strong>Photos et vidéos</strong> : le dossier indiqué dans Paramètres. Exemple Windows : <code>E:\Photos</code>.</li>
+      <li><strong>Windows</strong> : <code>C:\Users\VOTRENOM\AppData\Roaming\GaleriePhotos\</code> (<code>ouvrir-dossier-base.bat</code>).</li>
+      <li><strong>macOS</strong> : <code>Bibliothèque/Application Support/GaleriePhotos/</code>.</li>
+      <li><strong>Linux</strong> : <code>~/.config/galerie-photos/</code>.</li>
+    </ul>
+    <p>Décompressez le programme dans Documents, pas dans le zip encore ouvert, et pas obligatoirement sur le USB.</p>
+
+    <h2>Windows</h2>
+    <ol>
+      <li>Installez <a href="https://www.python.org/downloads/">Python 3.10 ou plus récent</a> depuis python.org, pas depuis le Microsoft Store. Cochez <strong>Add python.exe to PATH</strong>.</li>
+      <li>Décompressez le zip, par exemple dans <code>Documents\galerie-medias\</code>.</li>
+      <li>Double-cliquez <strong>preparer-python.bat</strong> (crée <code>.venv</code> sans ouvrir le site).</li>
+      <li>Double-cliquez <strong>ouvrir-galerie.bat</strong> (ou <code>start-windows.bat</code>). La première fois, l’installation des paquets dure quelques minutes. Internet est nécessaire. Si Windows demande une autorisation pour le pare-feu, cliquez <strong>Oui</strong>. Cette règle reste après un redémarrage. Le Wi-Fi doit être un réseau <strong>Privé</strong>.</li>
+      <li>Le navigateur s’ouvre sur <a href="https://127.0.0.1:8765">https://127.0.0.1:8765</a>. Premier passage : continuez vers le site (certificat de la maison). Un téléphone sur le même Wi-Fi utilise l’adresse affichée dans la fenêtre noire.</li>
+    </ol>
+    <p>Laissez la fenêtre noire ouverte pendant l’utilisation. Pour arrêter, fermez-la. La fenêtre suit la langue de Windows (français, anglais, espagnol ou allemand).</p>
+    <ul>
+      <li><code>creer-raccourci-bureau.bat</code> — icône sur le Bureau.</li>
+      <li><code>lister-disques.bat</code> — lettre du USB.</li>
+      <li><code>autoriser-parefeu.bat</code> — ports 8765 (site) et 8766 (télé) de façon permanente.</li>
+      <li><code>reparer-installation.bat</code> — si le site ne démarre plus, ou après une nouvelle version.</li>
+      <li><code>gerer-utilisateurs.bat</code> — comptes, mot de passe, déverrouillage.</li>
+    </ul>
+
+    <h2>macOS</h2>
+    <ol>
+      <li>Python 3.10 ou plus récent : <a href="https://www.python.org/downloads/">python.org</a> ou <code>brew install python</code>.</li>
+      <li>Double-clic sur <code>start-mac.command</code>. Si macOS bloque : clic droit, puis <strong>Ouvrir</strong>.</li>
+      <li>Le mot de passe de session peut être demandé pour le pare-feu. La règle est permanente. Refuser n’empêche pas d’ouvrir le site sur cet ordinateur. Pour réessayer : <code>autoriser-parefeu-mac.command</code>.</li>
+      <li>Le navigateur s’ouvre sur <code>https://127.0.0.1:8765</code>. Continuez vers le site au premier passage.</li>
+    </ol>
+    <p>Après une nouvelle version : <code>reparer-installation-mac.command</code>. Si le zip est décompressé par-dessus le même dossier, <code>start-mac.command</code> réinstalle aussi les paquets quand <code>REQUIS-fr.md</code> a changé. La fenêtre suit la langue du Mac.</p>
+    <p>Classement : <code>classer-annee-mois-mac.command</code>, puis <code>classer-lieux-mac.command</code>. Comptes : <code>gerer-utilisateurs-mac.command</code>.</p>
+
+    <h2>Linux</h2>
+    <ol>
+      <li>Python 3.10 ou plus récent, et <code>python3-venv</code> si la distribution le sépare. Debian ou Ubuntu : <code>sudo apt-get install python3 python3-venv python3-pip</code>. Fedora : <code>sudo dnf install python3</code>.</li>
+      <li>Décompressez le zip, par exemple dans <code>~/Documents/galerie-medias/</code>.</li>
+      <li>Dans un terminal, depuis ce dossier : <code>bash start-linux.sh</code>.</li>
+      <li>Le script prépare <code>.venv</code>, tente d’ouvrir les ports 8765 et 8766 (firewalld ou ufw), puis lance le site. Si le mot de passe d’administrateur est refusé, le site fonctionne quand même sur cet ordinateur.</li>
+      <li>Le navigateur s’ouvre sur <code>https://127.0.0.1:8765</code>. Continuez vers le site au premier passage. Un téléphone sur le même Wi-Fi utilise l’adresse affichée dans le terminal.</li>
+    </ol>
+    <p>Laissez le terminal ouvert. Pour arrêter, fermez-le. Les messages suivent <code>LANG</code> (français, anglais, espagnol ou allemand ; sinon français).</p>
+
+    <h2>HTTPS</h2>
+    <p>Le site n’a pas de mode HTTP. Au premier démarrage, un certificat de la maison est créé. Le navigateur avertit une fois : continuez vers le site.</p>
+    <p>Pour un nom public, par exemple <code>https://photos.example.com:8765</code>, le certificat vient de Let’s Encrypt, par une preuve DNS. Aucun port n’est ouvert sur la box. Le détail, dans les quatre langues, est dans l’aide : <a href="/static/help/fr.html#help-https">HTTPS et certificat</a>.</p>
+    <ol>
+      <li>Réservez le nom chez Cloudflare. Ne payez pas un certificat en plus : <a href="https://letsencrypt.org/">Let’s Encrypt</a> est gratuit.</li>
+      <li>Enregistrement <strong>A</strong>, nom <strong>@</strong>, adresse de l’ordinateur sur le réseau de la maison. Nuage Cloudflare <strong>gris</strong>. Ne redirigez pas le port 8765 vers Internet.</li>
+      <li>La commande qui demande le certificat n’est pas la même sous Linux, macOS et Windows. Le pas à pas est dans l’aide. Sous Linux, un script copie les fichiers. Sous macOS et Windows, copiez <code>fullchain.pem</code> et <code>privkey.pem</code> dans le dossier <code>letsencrypt</code> des réglages, puis rouvrez la galerie.</li>
+    </ol>
+
+    <h2>Première utilisation</h2>
+    <ol>
+      <li>Branchez le disque et attendez qu’il apparaisse.</li>
+      <li>Onglet <strong>Paramètres</strong>. Indiquez le dossier des photos, puis <strong>Enregistrer</strong>.</li>
+      <li>Classez avant d’indexer. Photos en vrac ou déjà par année : <code>classer-lieux.bat</code> (Windows) ou <code>classer-lieux-mac.command</code>. Arbre disparate, par exemple DCIM : d’abord <code>classer-annee-mois</code>, puis <code>classer-lieux</code>. Le choix 1 simule, le choix 2 écrit. Sous Linux : <code>.venv/bin/python tools/sort_annee_mois.py SOURCE DEST</code>, puis <code>.venv/bin/python tools/sort_lieux.py -d DEST</code>. Ajoutez <code>--apply</code> pour écrire.</li>
+      <li>Dans le site : <strong>Indexer</strong>. Attendez la fin.</li>
+    </ol>
+    <p>Les dossiers créés s’appellent <code>Annee 2024</code> et <code>Juin 2024</code>. Ces noms restent en français sur le disque.</p>
+
+    <h2>Mise à jour</h2>
+    <p>Fermez la fenêtre du site. Décompressez le nouveau zip par-dessus le même dossier. Ne supprimez pas GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> (Linux). Ne recopiez pas les photos. Puis <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, ou relancez <code>start-linux.sh</code>. Rechargez la page. Le détail est dans <code>MISE-A-JOUR-fr.md</code>. Les prérequis sont dans <code>REQUIS-fr.md</code>.</p>
+
+    <h2>Si la page ne s’ouvre pas</h2>
+    <ul>
+      <li>Python introuvable : python.org, case PATH, puis relancez.</li>
+      <li>Fermez l’ancienne fenêtre, relancez, et ouvrez <code>https://127.0.0.1:8765</code> à la main.</li>
+      <li>L’adresse <code>http://</code> ne répond pas : le site est uniquement en HTTPS.</li>
+      <li>Photos introuvables : disque branché, bonne lettre (<code>lister-disques.bat</code>).</li>
+    </ul>
+  </article>
+</body>
+</html>

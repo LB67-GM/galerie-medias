@@ -1,0 +1,10 @@
+[Unit]
+Description=Sauvegarde galerie chaque mercredi à 23:00
+
+[Timer]
+OnCalendar=Wed *-*-* 23:00:00
+Persistent=true
+Unit=photo-library-backup.service
+
+[Install]
+WantedBy=timers.target

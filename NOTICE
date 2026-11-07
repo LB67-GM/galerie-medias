@@ -1,0 +1,51 @@
+Galerie Médias
+Copyright (c) 2026 Luigi Bennardi
+Licence du programme : MIT, fichier LICENSE.
+
+Ce fichier cite les composants tiers. Leur licence reste la leur.
+This file names third-party components. Each keeps its own licence.
+
+Carte / Map
+  Leaflet 1.9.4 — BSD 2-Clause.
+  Copyright (c) 2010-2023, Volodymyr Agafonkin
+  Copyright (c) 2010-2011, CloudMade
+  Texte : static/vendor/leaflet/LICENSE
+  Tuiles / tiles : © OpenStreetMap contributors
+  https://www.openstreetmap.org/copyright
+  https://tile.openstreetmap.org/{z}/{x}/{y}.png
+
+Villes / Cities
+  reverse-geocoder — GNU LGPL 2.1 (code).
+  Données GeoNames — Creative Commons Attribution 4.0.
+  https://www.geonames.org/
+
+Drapeaux / Flags
+  flag-icons — MIT.
+  Copyright (c) 2013 Panayiotis Lipiridis
+  Texte : static/flags/LICENSE
+
+Visages / Faces
+  insightface (code Python) — MIT.
+  Modèles buffalo_l — recherche non commerciale seulement, selon InsightFace.
+  Ces modèles ne sont pas dans les sources ; le programme les télécharge
+  dans ~/.insightface/.
+  https://github.com/deepinsight/insightface
+  Repli OpenCV : YuNet (MIT, Shiqi Yu, opencv_zoo) et SFace (Apache 2.0, opencv_zoo).
+
+Scènes / Scenes
+  mobilenetv2-12.onnx — Apache 2.0, dépôt onnx/models.
+  Téléchargé à part, pas inclus dans les sources.
+
+Vidéo / Video
+  imageio-ffmpeg (code Python) — BSD 2-Clause.
+  Le binaire FFmpeg qu’il installe est un programme séparé sous GPL
+  (souvent GPL-3.0 ou ultérieure, selon la construction).
+  Il n’est pas inclus dans les sources de Galerie Médias.
+  https://ffmpeg.org/legal.html
+
+Paquets Python
+  Installés par pip, chacun avec sa licence :
+  fastapi (MIT), uvicorn (BSD), starlette (BSD), cryptography (Apache 2.0 ou BSD),
+  pillow (MIT-CMU), pillow-heif (BSD), numpy (BSD), scipy (BSD),
+  opencv-python-headless (Apache 2.0), onnxruntime (MIT),
+  python-multipart (Apache 2.0), icloudpd (MIT).

@@ -1,0 +1,10 @@
+[Unit]
+Description=Galerie Médias — sauvegarde hebdomadaire (base + réglages)
+After=network-online.target photo-library.service
+Wants=network-online.target photo-library.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=infinity
+WorkingDirectory=/chemin/vers/photo-library
+ExecStart=/chemin/vers/photo-library/.venv/bin/python /chemin/vers/photo-library/scripts/weekly_backup.py

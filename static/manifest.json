@@ -1,0 +1,26 @@
+{
+  "name": "Galerie Médias",
+  "short_name": "Galerie Médias",
+  "description": "Galerie Médias, sur cet ordinateur",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1b1916",
+  "background_color": "#1b1916",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/static/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["photo", "lifestyle"]
+}

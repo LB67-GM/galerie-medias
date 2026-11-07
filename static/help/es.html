@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ayuda — Galerie Médias</title>
+  <script>
+    try {
+      var theme = localStorage.getItem("galerie-theme");
+      var themes = ["amber", "ink", "ocean", "forest", "paper", "daylight"];
+      if (themes.indexOf(theme) >= 0) document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="/static/styles.css?v=79">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+</head>
+<body class="help-standalone">
+  <header class="help-bar">
+    <a class="help-back" href="/">Volver a la galería</a>
+    <nav class="help-langs" aria-label="Idioma">
+      <a href="fr.html" hreflang="fr" lang="fr" title="Français" aria-label="Français"><img class="flag" alt="" src="/static/flags/fr.svg"></a>
+      <a href="en.html" hreflang="en" lang="en" title="English" aria-label="English"><img class="flag" alt="" src="/static/flags/gb.svg"></a>
+      <a href="es.html" hreflang="es" lang="es" title="Español" aria-label="Español" aria-current="page"><img class="flag" alt="" src="/static/flags/es.svg"></a>
+      <a href="de.html" hreflang="de" lang="de" title="Deutsch" aria-label="Deutsch"><img class="flag" alt="" src="/static/flags/de.svg"></a>
+    </nav>
+  </header>
+  <article id="helpArticle" class="help-doc">
+    <h1>Ayuda</h1>
+    <p>Galerie Médias, versión 3.0. Esta guía describe cada menú, en el orden en que los ve. El mismo texto existe en francés, inglés y alemán: cambie el idioma arriba a la derecha y vuelva a abrir <strong>?</strong>.</p>
+    <nav class="toc" aria-label="En esta página">
+      <ol>
+        <li><a href="#help-application">La aplicación</a></li>
+        <li><a href="#help-langue">Idioma y tema</a></li>
+        <li><a href="#help-https">HTTPS y el certificado</a></li>
+        <li><a href="#help-connexion">Inicio de sesión</a></li>
+        <li><a href="#help-mot-de-passe">Contraseña olvidada</a></li>
+        <li><a href="#help-photos">Fotos</a></li>
+        <li><a href="#help-personnes">Personas</a></li>
+        <li><a href="#help-scenes">Escenas</a></li>
+        <li><a href="#help-doublons">Duplicados</a></li>
+        <li><a href="#help-carte">Mapa</a></li>
+        <li><a href="#help-albums">Álbumes</a></li>
+        <li><a href="#help-corbeille">Papelera</a></li>
+        <li><a href="#help-parametres">Ajustes</a></li>
+        <li><a href="#help-outils">Herramientas</a></li>
+        <li><a href="#help-lecture">Cuenta de lectura</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="help-application">La aplicación</h2>
+    <p>Galerie Médias es un sitio que usted pone en marcha en casa, en su ordenador. Muestra las fotos y los vídeos de una carpeta de esa máquina, o de un disco de la red, sin enviarlos a otro lugar. Los encuentra por año, mes, lugar, momento, álbum o nombre. Los ve en grande, en presentación, o en un televisor de la casa. Puede enviar una foto o un vídeo a Facebook, Messenger, Instagram o TikTok: el archivo va a la aplicación, y el sitio permanece privado. Un administrador prepara la biblioteca, pone nombre a las personas, clasifica las escenas, corrige un lugar, mueve archivos o los envía a la papelera. Una cuenta de lectura mira, sin modificar nada.</p>
+    <p>El programa del servidor está escrito en <strong>Python</strong>. Las páginas que usted ve están escritas en <strong>HTML</strong>, <strong>CSS</strong> y <strong>JavaScript</strong>. La lista de fotos se guarda en <strong>SQLite</strong>, que acompaña a Python. El mapa se apoya en Leaflet. Los rostros, las escenas y los vídeos se apoyan en otros programas abiertos, en particular OpenCV, InsightFace, ONNX Runtime y FFmpeg.</p>
+    <p>Galerie Médias se publica bajo la licencia <strong>MIT</strong> (archivo <code>LICENSE</code>). Puede copiar, modificar y redistribuir este programa, incluso en un producto de pago, conservando ese archivo y el nombre del autor. Los demás componentes están en <code>NOTICE</code>.</p>
+    <p>Las bibliotecas instaladas con Python conservan su licencia (MIT, BSD o Apache 2.0). El mapa usa Leaflet 1.9.4 (BSD). Las banderas vienen de flag-icons (MIT). Los nombres de ciudades vienen de <a href="https://www.geonames.org/">GeoNames</a>, bajo Creative Commons BY 4.0. Los fondos de mapa son © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+    <p>Los modelos de rostros InsightFace (<code>buffalo_l</code>), descargados en <code>~/.insightface/</code>, no están bajo MIT. InsightFace los reserva a la investigación no comercial. Sin esos modelos, la detección usa OpenCV (YuNet y SFace), bajo una licencia permisiva. FFmpeg, para los vídeos, es un programa aparte bajo GPL. No está incluido en las fuentes de Galerie Médias.</p>
+
+    <h2 id="help-langue">Idioma y tema</h2>
+    <p>Arriba a la derecha hay dos menús que permanecen visibles.</p>
+    <ul>
+      <li><strong>Idioma</strong>: francés, inglés, español o alemán. En la primera visita, el sitio sigue el idioma del navegador. Si no lo reconoce, permanece en francés.</li>
+      <li><strong>Tema</strong>: Ámbar (oscuro, cálido), Tinta, Océano, Bosque, Papel (claro) y Día (claro). Ámbar es el tema original.</li>
+    </ul>
+    <p>La elección se queda en este navegador, en este aparato. No cambia la cuenta de las demás personas.</p>
+
+    <h2 id="help-https">HTTPS y el certificado</h2>
+    <p>El sitio se abre siempre con una dirección que empieza por <strong>https://</strong>, en el puerto 8765. No hay dirección <strong>http://</strong>. El candado cifra el intercambio entre su navegador y el ordenador que hace funcionar la galería. Las fotos permanecen en ese ordenador. No se publican en Internet.</p>
+    <p>Hay dos candados posibles. El primero basta en casa.</p>
+    <ul>
+      <li><strong>Certificado de casa.</strong> Nada que instalar. Se crea en el primer arranque. El navegador muestra un aviso una vez, porque este certificado no es conocido por el público. Continúe hacia el sitio: es su ordenador. En este ordenador, la dirección es <code>https://127.0.0.1:8765</code>. Desde un teléfono, en la misma Wi-Fi, se parece a <code>https://192.168.x.x:8765</code>.</li>
+      <li><strong>Certificado de un nombre.</strong> <a href="https://letsencrypt.org/">Let’s Encrypt</a> lo entrega gratis. Está unido a un nombre, por ejemplo <code>https://photos.example.com:8765</code>. El navegador ya no muestra un aviso. Si está instalado, sustituye al certificado de casa. Si falta, el certificado de casa sigue en servicio. La herramienta que lo pide se llama Certbot: <a href="https://certbot.eff.org/">certbot.eff.org</a>.</li>
+    </ul>
+    <p><a href="https://www.wireguard.com/">WireGuard</a> es una VPN: un túnel privado entre su teléfono, u otro ordenador, y la casa, cuando no está en la Wi-Fi. Los instaladores para Windows, macOS, Linux, iPhone y Android están en <a href="https://www.wireguard.com/install/">wireguard.com/install</a>. Con el certificado del nombre, la galería responde en la Wi-Fi de casa y a través de ese túnel. No responde desde un café sin el túnel. No abra el puerto 8765 en el router.</p>
+    <p>El televisor LG o Samsung usa otro puerto, el 8766, sin certificado. No es la dirección del sitio. El botón <strong>TV</strong> lo usa solo en la red de casa.</p>
+    <h3>Obtener el certificado del nombre</h3>
+    <p>Esta parte es opcional. Demuestra que el nombre le pertenece, sin abrir un puerto. El certificado sigue al nombre: en una mudanza, cambie la dirección del nombre y conserve el mismo certificado.</p>
+    <p>Estos tres pasos son los mismos en Linux, macOS y Windows.</p>
+    <ol>
+      <li>Reserve un nombre de dominio en <a href="https://www.cloudflare.com/">Cloudflare</a>. Deje de lado cualquier oferta de pago de certificado, alojamiento o correo. Let’s Encrypt es gratis.</li>
+      <li>En el DNS del nombre, añada un registro <strong>A</strong>. Nombre: <strong>@</strong>. Dirección: la del ordenador que hace funcionar la galería, en la red de casa (suele empezar por 192.168). Pulse la nube de Cloudflare hasta que quede <strong>gris</strong>. Una nube naranja no sirve. No redirija el puerto 8765 hacia Internet.</li>
+      <li>Cree un token en <a href="https://dash.cloudflare.com/profile/api-tokens">la página de tokens de Cloudflare</a>, limitado a este nombre, con permiso para modificar el DNS. No lo copie en un mensaje, un documento ni un chat. El archivo que lo contiene tiene una sola línea: <code>dns_cloudflare_api_token = EL_TOKEN</code></li>
+    </ol>
+    <p>La orden que pide el certificado depende del sistema. Sustituya <code>photos.example.com</code> por su nombre. El final esperado es <code>Successfully received certificate</code>. Cuentan dos archivos: <code>fullchain.pem</code> y <code>privkey.pem</code>. Copie los archivos mismos, no un acceso directo.</p>
+    <h3>Linux</h3>
+    <p>En el ordenador Linux que hace funcionar el sitio:</p>
+    <pre>sudo apt-get install certbot python3-certbot-dns-cloudflare</pre>
+    <p>Guarde el token en <code>/etc/letsencrypt/cloudflare.ini</code>, legible solo por el administrador (permisos 600). Luego:</p>
+    <pre>sudo certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>Copie los dos archivos en la carpeta de la galería. Créela si falta. Una galería iniciada con <code>start-linux.sh</code> los lee en <code>~/.config/galerie-photos/cache/letsencrypt/</code>. Un servicio cuyo caché está en <code>~/.cache/photo-library/</code> los lee en <code>~/.cache/photo-library/letsencrypt/</code>.</p>
+    <pre>mkdir -p ~/.config/galerie-photos/cache/letsencrypt
+sudo cp -L /etc/letsencrypt/live/photos.example.com/fullchain.pem ~/.config/galerie-photos/cache/letsencrypt/
+sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem ~/.config/galerie-photos/cache/letsencrypt/</pre>
+    <p>Cada sesenta días aproximadamente, vuelva a lanzar la misma orden de Certbot y copie otra vez los dos archivos.</p>
+    <h3>macOS</h3>
+    <p>La orden de Linux no se lanza tal cual en el Terminal del Mac. Instale <a href="https://brew.sh/">Homebrew</a>, luego Certbot y el módulo de Cloudflare:</p>
+    <pre>brew install certbot
+"$(brew --prefix certbot)/libexec/bin/python3" -m pip install certbot-dns-cloudflare</pre>
+    <p>Cree la carpeta <code>~/.secrets/certbot/</code> y el archivo <code>cloudflare.ini</code> con la línea del token. En el Terminal: <code>chmod 600 ~/.secrets/certbot/cloudflare.ini</code>. Luego:</p>
+    <pre>sudo certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>Los archivos llegan a <code>/etc/letsencrypt/live/photos.example.com/</code>. Cópielos a la carpeta de la galería. Cree esa carpeta si no existe:</p>
+    <pre>mkdir -p "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt"
+sudo cp -L /etc/letsencrypt/live/photos.example.com/fullchain.pem "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt/"
+sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/Application Support/GaleriePhotos/cache/letsencrypt/"</pre>
+    <p>Cierre la ventana de la galería y vuelva a abrir <code>start-mac.command</code>. El certificado dura unos sesenta días. Vuelva a lanzar la orden de Certbot y copie otra vez los dos archivos. El script que renueva solo está reservado a Linux.</p>
+    <h3>Windows</h3>
+    <p>La orden de Linux no funciona en la ventana negra de la galería, ni en el símbolo del sistema, mientras Certbot no esté instalado para Windows.</p>
+    <p>Lo más simple, si un ordenador Linux de casa ya tiene el certificado: copie <code>fullchain.pem</code> y <code>privkey.pem</code> en</p>
+    <pre>C:\Users\SUNOMBRE\AppData\Roaming\GaleriePhotos\cache\letsencrypt\</pre>
+    <p>Cree la carpeta <code>letsencrypt</code> si no existe. Cierre la ventana negra y vuelva a abrir la galería.</p>
+    <p>Si la galería funciona solo en Windows, instale Python desde <a href="https://www.python.org/downloads/">python.org/downloads</a> y marque « Add python.exe to PATH ». Abra PowerShell y luego:</p>
+    <pre>py -m pip install certbot certbot-dns-cloudflare</pre>
+    <p>Cree un archivo, por ejemplo <code>C:\Users\SUNOMBRE\secrets\cloudflare.ini</code>, con la línea del token. Luego, en PowerShell:</p>
+    <pre>py -m certbot certonly --non-interactive --agree-tos --register-unsafely-without-email --dns-cloudflare --dns-cloudflare-credentials C:\Users\SUNOMBRE\secrets\cloudflare.ini --dns-cloudflare-propagation-seconds 30 -d photos.example.com</pre>
+    <p>Certbot indica la carpeta al final. Contiene los dos archivos. En Windows, esa carpeta suele ser <code>C:\Certbot\live\photos.example.com\</code>. Copie <code>fullchain.pem</code> y <code>privkey.pem</code> en <code>C:\Users\SUNOMBRE\AppData\Roaming\GaleriePhotos\cache\letsencrypt\</code> y vuelva a abrir la galería. Cada sesenta días aproximadamente, vuelva a lanzar la misma orden de Certbot y copie otra vez los dos archivos.</p>
+    <p>Abra después <code>https://photos.example.com:8765</code>. El candado corresponde al nombre. El puerto sigue siendo 8765.</p>
+    <p>La instalación del programa, en Linux, macOS y Windows, está descrita aparte: <a href="/static/install/es.html">Instalación</a>.</p>
+
+    <h2 id="help-connexion">Inicio de sesión</h2>
+    <p>Mientras no exista ninguna cuenta, la galería está abierta. En cuanto se crea una cuenta, aparece la página de inicio de sesión.</p>
+    <ol>
+      <li>Escriba su usuario.</li>
+      <li>Escriba su contraseña.</li>
+      <li>Elija <strong>Iniciar sesión</strong>.</li>
+    </ol>
+    <p>Este navegador le reconoce después durante 14 días. No tiene que volver a escribir la contraseña en cada visita, en este mismo aparato. <strong>Cerrar sesión</strong> retira el acceso: las fotos dejan de mostrarse hasta que vuelva a entrar.</p>
+    <p>Tres intentos incorrectos bloquean la cuenta. Use entonces <strong>¿Olvidó su contraseña?</strong>, o pida a un administrador que la restablezca.</p>
+    <p>La primera cuenta es de administrador. Una cuenta de <strong>lectura</strong> ve las fotos, el mapa, los álbumes y esta ayuda. No modifica ni la biblioteca ni las cuentas.</p>
+
+    <h2 id="help-mot-de-passe">Contraseña olvidada</h2>
+    <p>En la página de inicio de sesión, elija <strong>¿Olvidó su contraseña?</strong>.</p>
+    <ol>
+      <li>Escriba el correo de la cuenta.</li>
+      <li>Elija <strong>Enviar enlace</strong>.</li>
+      <li>Abra el mensaje. El enlace vale una hora.</li>
+      <li>Elija una contraseña nueva, de 8 caracteres como mínimo, y confírmela.</li>
+    </ol>
+    <p>El sitio no dice si el correo existe. Si corresponde a una cuenta, el enlace se envía. Después de guardarla, las sesiones anteriores de esa cuenta se cierran: hay que volver a entrar.</p>
+    <p>El correo escrito aquí es el de la cuenta, en <strong>Cuentas</strong>. No es necesariamente la dirección que envía los mensajes. Si el correo aún no está configurado, el sitio se lo indica. Un administrador lo prepara en <strong>Ajustes</strong>, sección <strong>Correo</strong>, e indica el correo de cada cuenta en <strong>Cuentas</strong>. Sin eso, solo un administrador puede elegir una contraseña nueva.</p>
+
+    <h2 id="help-photos">Fotos</h2>
+    <p>Es la página de inicio. Sin filtro, las fotos más recientes aparecen primero.</p>
+    <h3>Filtros</h3>
+    <p>En un teléfono, abra <strong>Filtros</strong>. Los filtros se combinan: un año <em>y</em> un lugar <em>y</em> un álbum, por ejemplo.</p>
+    <ul>
+      <li><strong>Año</strong> y <strong>Mes</strong>: según la carpeta o la fecha de la foto.</li>
+      <li><strong>Lugar</strong>: una ciudad, una región, un país. <strong>Momento</strong>: un viaje, un cumpleaños, una fiesta. Un viaje no es un lugar.</li>
+      <li><strong>Tipo</strong>: fotos o vídeos.</li>
+      <li><strong>Álbum</strong> y <strong>Escena</strong>: véase más abajo.</li>
+      <li><strong>Búsqueda</strong>: una palabra entera en el nombre del archivo, el lugar, el momento o el nombre. «Roma» no encuentra «Andrómeda». La cruz del campo devuelve toda la galería. Aquí no hay un menú Personas: escriba el nombre en la búsqueda.</li>
+    </ul>
+    <p>Cambiar un filtro borra la selección en curso.</p>
+    <h3>Ver una foto</h3>
+    <p>Haga clic en una miniatura para abrirla en grande. El marco respeta las proporciones. Pellizque la pantalla, o use la rueda, para ampliar. <strong>Anterior</strong> y <strong>Siguiente</strong> pasan a la foto vecina. <strong>Presentación</strong> las muestra una tras otra.</p>
+    <p>Los vídeos se reproducen en el navegador, también los del iPhone.</p>
+    <p><strong>Compartir</strong> envía la foto o el vídeo a Facebook, Messenger, Instagram o TikTok. El archivo va a la aplicación: estas redes no leen el sitio. En un ordenador sin lista para compartir, el archivo se descarga; abra después la aplicación y elíjalo.</p>
+    <h3>Televisión</h3>
+    <p><strong>TV</strong> envía la foto o el vídeo a un televisor LG o Samsung encendido, en la misma red. Elija el nombre del televisor y deténgalo desde la misma ventana cuando termine.</p>
+    <h3>Selección</h3>
+    <p>Estas acciones están reservadas al administrador, salvo la presentación, la televisión y compartir.</p>
+    <ul>
+      <li><strong>Esta página</strong> marca las fotos visibles. <strong>Seleccionar todo</strong> marca todo el filtro, no solo la página. Mayús+clic selecciona un rango. <strong>Borrar selección</strong> quita las marcas.</li>
+      <li>La estrella añade la foto a un álbum, o la quita.</li>
+      <li><strong>Añadir al álbum</strong> y <strong>Quitar del álbum</strong> piden al menos una foto marcada.</li>
+      <li><strong>Lugar</strong> corrige el nombre mostrado y la marca en el mapa. La carpeta del disco no cambia. Arrastre el mapa: la marca permanece en el centro. También puede corregir las demás fotos solo de esa carpeta.</li>
+      <li><strong>Mover</strong> envía los archivos marcados a una carpeta que ya existe, en el mismo año. El vídeo del mismo nombre va con ellos.</li>
+      <li><strong>Exportar</strong> copia los originales a una carpeta, o descarga un archivo zip. Los archivos de la biblioteca se quedan en su sitio.</li>
+      <li><strong>Eliminar</strong> envía la selección a la papelera durante 30 días, tras la confirmación. El límite es de 500 archivos a la vez.</li>
+    </ul>
+    <p>En grande, <strong>Girar / recortar</strong> deja la foto modificada en la galería y pone el original en la papelera. <strong>Restaurar</strong>, en Papelera, devuelve el original.</p>
+
+    <h2 id="help-personnes">Personas</h2>
+    <p>Reservado al administrador. El reconocimiento permanece en este ordenador: ningún rostro se envía a otro sitio.</p>
+    <ol>
+      <li>Elija <strong>Indexar</strong> en Herramientas, para que las fotos sean conocidas.</li>
+      <li>Elija <strong>Detectar personas</strong>. La primera vez puede tardar.</li>
+      <li>Marque solo los rostros que reconozca y ponga nombre a la selección.</li>
+      <li><strong>Revisar</strong> coloca arriba una foto de esa persona. <strong>No…</strong> retira un error.</li>
+    </ol>
+    <p>En grande, la tecla X retira el rostro. Para las fotos nuevas: indexe primero y vuelva a detectar. Solo se tratan los archivos que aún no se han analizado.</p>
+
+    <h2 id="help-scenes">Escenas</h2>
+    <p>Reservado al administrador. Una escena es una etiqueta: iglesia, montaña, ciudad, rango…</p>
+    <ol>
+      <li>Elija un año, y un lugar si quiere limitar el lote.</li>
+      <li>Elija <strong>Detectar escenas</strong>. El resultado es una sugerencia y a menudo hay que corregirlo.</li>
+      <li>Marque solo las fotos correctas y etiquete la selección.</li>
+      <li><strong>Revisar</strong> y luego <strong>No…</strong> retira un error.</li>
+    </ol>
+    <p>En Fotos, el filtro <strong>Escena</strong> encuentra después esas fotos.</p>
+
+    <h2 id="help-doublons">Duplicados</h2>
+    <p>Reservado al administrador. La misma foto puede existir en varios archivos. <strong>Conservar</strong> es una sugerencia, no una obligación.</p>
+    <p>Puede enviar a la papelera todas las copias de más, o solo las que marque. Aparece una confirmación. Los archivos permanecen 30 días en la papelera.</p>
+
+    <h2 id="help-carte">Mapa</h2>
+    <p>Cada marca es un lugar. Haga clic en ella para abrir las fotos de ese lugar. Los viajes, cumpleaños y fiestas están en el filtro <strong>Momento</strong>, no en el mapa.</p>
+    <p>Los fondos de mapa vienen de Internet (© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors). Sin red, el mapa no se muestra; las fotos siguen disponibles.</p>
+    <p>Un lugar que haya corregido en <strong>Lugar</strong> permanece en el menú Lugar.</p>
+
+    <h2 id="help-albums">Álbumes</h2>
+    <p>Un álbum es una lista. Los archivos no se copian: una foto puede estar en varios álbumes. <strong>Favoritos</strong> es un álbum como los demás.</p>
+    <ol>
+      <li>Escriba un nombre y cree el álbum.</li>
+      <li>Ábralo, o vuelva a Fotos.</li>
+      <li>Marque fotos y elija <strong>Añadir al álbum</strong>. La estrella hace lo mismo y también puede quitar la foto.</li>
+    </ol>
+    <p>En un álbum abierto, <strong>Quitar del álbum</strong> saca la selección de ese álbum. El archivo permanece en la biblioteca.</p>
+
+    <h2 id="help-corbeille">Papelera</h2>
+    <p>Reservado al administrador. Las fotos eliminadas permanecen aquí 30 días. Después, el sitio las borra.</p>
+    <ul>
+      <li><strong>Restaurar la selección</strong> devuelve los archivos a su sitio.</li>
+      <li><strong>Eliminar definitivamente</strong> solo afecta a los archivos marcados, tras la confirmación. Esta acción no se puede deshacer.</li>
+    </ul>
+    <p><strong>Esta página</strong>, <strong>Todo</strong> y <strong>Borrar selección</strong> funcionan como en Fotos.</p>
+
+    <h2 id="help-parametres">Ajustes</h2>
+    <p>Reservado al administrador. <strong>Guardar</strong>, al final de la página, memoriza los ajustes. No inicia ni la descarga, ni la clasificación, ni la copia de seguridad.</p>
+    <h3>Teléfono</h3>
+    <p>El sitio permanece en el ordenador que lo ejecuta. En el teléfono, use la misma red Wi-Fi, abra la dirección del sitio y acepte el certificado si el navegador lo pide. Después puede añadirlo a la pantalla de inicio.</p>
+    <p>Elija de dónde vienen las fotos: iPhone / iCloud, Android / Google Photos, o un archivo de Facebook / Messenger.</p>
+    <h3>iCloud</h3>
+    <p>Esta sección descarga las fotos y los vídeos que aún están en iCloud hacia la carpeta de recepción. Indique el identificador de Apple, la contraseña y, si lo desea, el año y el mes. La contraseña permanece cifrada en este ordenador. El código que pide Apple aparece en el iPhone: escríbalo en la página, no en otra ventana.</p>
+    <p>La carpeta de recepción es una zona de llegada. No es la galería. Los archivos permanecen ahí hasta la clasificación y hasta <strong>Indexar</strong>. Ejemplo después de una descarga de iCloud:</p>
+    <pre>triage/2024/06/IMG_1234.HEIC</pre>
+    <h3>Google Photos</h3>
+    <p>Dos formas sencillas: exportar desde Google Takeout, o conectar el teléfono y copiar la carpeta DCIM. Indique después esa carpeta. La clasificación se hace en la sección Clasificar.</p>
+    <h3>Facebook</h3>
+    <p>También puede descargar las fotos y los vídeos desde Facebook. En Facebook: Configuración y privacidad, luego Tu información, luego Descargar tu información. Pida las fotos, los vídeos y los mensajes. El archivo <strong>message_1.json</strong> contiene la fecha, porque estos medios a menudo no tienen fecha dentro de la foto. Descomprima el archivo en la carpeta indicada, guarde y luego lance <strong>Clasificar desde Facebook</strong>.</p>
+    <pre>facebook/messages/inbox/Nombre/photos/12345.jpg
+facebook/messages/inbox/Nombre/message_1.json</pre>
+    <p>Después de la clasificación, un archivo de marzo de 2019 queda así. Si hay una posición, la ciudad sustituye al mes:</p>
+    <pre>Annee 2019/Mars 2019/12345.jpg
+Annee 2019/Montreal/12345.jpg</pre>
+    <h3>Clasificar</h3>
+    <p>La clasificación copia los archivos hacia la biblioteca. Si el origen y el destino son la misma carpeta, los desplaza. Lance primero la simulación: no escribe nada. Después, haga clic en <strong>Indexar</strong> para ver las fotos.</p>
+    <p><strong>Clasificar año / mes</strong> ordena por fecha. Una foto de junio de 2024, todavía en la recepción, queda así:</p>
+    <pre>Annee 2024/Juin 2024/IMG_1234.HEIC</pre>
+    <p><strong>Clasificar desde la entrada</strong> lee la carpeta de recepción (iCloud) o la carpeta Takeout / DCIM. <strong>Clasificar la biblioteca actual</strong> no lee la recepción. Ordena las fotos que ya están en la biblioteca, en la raíz de un año o en una carpeta de mes, hacia una carpeta de ciudad si hay una posición:</p>
+    <pre>Annee 2024/Rome/IMG_1234.HEIC</pre>
+    <p>Sin posición, el archivo permanece en la carpeta del mes, por ejemplo <strong>Annee 2024/Juin 2024/</strong>. Los nombres Annee y los meses en francés son los nombres de las carpetas en el disco. No cambian con el idioma del sitio.</p>
+    <h3>Copia de seguridad</h3>
+    <p>Indique una carpeta (disco externo, otro ordenador) y elija <strong>Hacer copia ahora</strong>. La copia contiene el índice, los ajustes y las páginas del sitio. Las miniaturas no se copian: <strong>Indexar</strong> las vuelve a crear. Las fotos en sí se quedan donde están.</p>
+    <h3>Correo</h3>
+    <p>Esta sección configura la cuenta que envía el enlace «contraseña olvidada». No es el correo de cada persona. Una sola cuenta basta para toda la casa.</p>
+    <p>Ejemplo con Gmail:</p>
+    <ul>
+      <li><strong>Servidor</strong>: smtp.gmail.com</li>
+      <li><strong>Puerto</strong>: 587</li>
+      <li><strong>Usuario</strong>: john.doe@gmail.com</li>
+      <li><strong>Contraseña</strong>: una contraseña de aplicación de Google, 16 letras. Google las muestra en cuatro bloques separados por espacios. Los espacios no cuentan: el sitio los quita. No es la contraseña habitual de la cuenta de Google.</li>
+      <li><strong>Remitente</strong>: john.doe@gmail.com, la misma cuenta que el usuario. Una dirección inventada, por ejemplo galerie@gmail.com, no sale.</li>
+      <li><strong>Cifrado STARTTLS</strong>: marcado.</li>
+      <li><strong>Dirección del sitio</strong>: https://photos.example.com:8765, tal como las personas la abren en el navegador.</li>
+    </ul>
+    <p>La contraseña de aplicación se crea en https://myaccount.google.com/apppasswords, después de la verificación en dos pasos. Elija «Otra» y el nombre Galería. Permanece cifrada en este equipo. Deje el campo vacío para conservar la que ya está guardada.</p>
+    <p><strong>Guardar</strong>, al final de la página, guarda esta sección. No guarda el correo de las cuentas.</p>
+    <h3>Cuentas</h3>
+    <p>Cada persona tiene su propio correo. Es la dirección que recibe el enlace, y la que escribe en <strong>¿Olvidó su contraseña?</strong>. Puede ser distinta de la cuenta de Gmail que envía.</p>
+    <p>John Doe usa john.doe@gmail.com para el envío. Su cuenta de la galería lleva esa misma dirección solo si es de verdad su buzón. Marie Martin tiene otra cuenta: su correo es marie.martin@gmail.com. El enlace de Marie llega a Marie. Dos cuentas no pueden compartir la misma dirección.</p>
+    <p>Al crear la cuenta, el correo es obligatorio. Después de un cambio, el botón <strong>Guardar</strong> en la misma línea que la cuenta muestra «Correo guardado.» Recargue la página: la dirección debe seguir ahí. El botón al final de la página no hace este registro. El autocompletado del navegador puede mostrar una dirección que no está guardada.</p>
+    <p>Cree también un usuario, una contraseña de al menos 8 caracteres y un papel. Puede retirar una cuenta.</p>
+
+    <h2 id="help-outils">Herramientas</h2>
+    <p>Reservado al administrador. El botón <strong>Herramientas</strong> abre tres acciones.</p>
+    <ul>
+      <li><strong>Indexar</strong> lee la biblioteca y prepara las miniaturas. Elija un año, o toda la biblioteca. Hágalo antes de detectar personas o escenas, y después de que lleguen fotos nuevas.</li>
+      <li><strong>Detectar personas</strong>: véase Personas.</li>
+      <li><strong>Detectar escenas</strong>: véase Escenas.</li>
+    </ul>
+    <p>El avance se muestra en la banda de la parte superior. Espere al final antes de iniciar otro.</p>
+
+    <h2 id="help-lecture">Cuenta de lectura</h2>
+    <p>Con una cuenta de lectura, ve <strong>Fotos</strong>, <strong>Mapa</strong>, <strong>Álbumes</strong> y <strong>?</strong>. Puede filtrar, abrir las fotos, iniciar la presentación, enviar al televisor y compartir una foto o un vídeo.</p>
+    <p>No ve Personas, Escenas, Duplicados, Papelera, Ajustes ni Herramientas. No puede eliminar, mover, exportar ni modificar un lugar.</p>
+  </article>
+  <script>
+    document.querySelectorAll(".help-langs a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        try { localStorage.setItem("galerie-lang", a.getAttribute("hreflang")); } catch (e) {}
+      });
+    });
+  </script>
+</body>
+</html>
