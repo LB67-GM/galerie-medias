@@ -170,6 +170,10 @@ First time: sort before indexing. A mixed tree: `classer-annee-mois.bat "E:\Loos
 
 SQLite and thumbnails stay on the computer. Photos may stay on a USB disk.
 
+## iCloud
+
+Before using the iCloud download in **Settings**, sign in at [icloud.com](https://www.icloud.com) with the same Apple ID, in a browser. Apple sometimes shows its terms and conditions before opening the photos. Until those terms are accepted, the download cannot fetch the photos.
+
 ## Licence
 
 Galerie Médias is under the **MIT** licence ([LICENSE](./LICENSE)). Third-party components are listed in [NOTICE](./NOTICE): Leaflet, flag-icons flags, GeoNames cities, tiles © OpenStreetMap contributors, FFmpeg (a separate program, GPL). The InsightFace `buffalo_l` face model is not under MIT.

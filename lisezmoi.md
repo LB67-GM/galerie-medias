@@ -170,6 +170,10 @@ Première fois : classer avant d’indexer. Arbre disparate : `classer-annee-moi
 
 SQLite et miniatures restent sur l’ordinateur. Les photos peuvent être sur un USB.
 
+## iCloud
+
+Avant d’utiliser le téléchargement iCloud dans **Paramètres**, ouvrez une session sur [icloud.com](https://www.icloud.com) avec le même identifiant Apple, dans un navigateur. Apple affiche parfois ses conditions générales avant d’ouvrir les photos. Tant qu’elles ne sont pas acceptées, le téléchargement ne peut pas récupérer les photos.
+
 ## Licence
 
 Galerie Médias est sous licence **MIT** ([LICENSE](./LICENSE)). Les composants tiers sont dans [NOTICE](./NOTICE) : Leaflet, drapeaux flag-icons, villes GeoNames, tuiles © OpenStreetMap contributors, FFmpeg (programme séparé, GPL). Le modèle de visages InsightFace `buffalo_l` n’est pas sous MIT.

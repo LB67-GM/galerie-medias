@@ -3,7 +3,7 @@
  * Les requêtes /api/*, /thumb/* et /photo/* ne sont pas mises en cache.
  */
 
-const CACHE = "galerie-v80";
+const CACHE = "galerie-v81";
 const SHELL = [
   "/",
   "/static/styles.css",
