@@ -3727,6 +3727,73 @@ $("btnSlideshow").addEventListener("click", () => {
   state.lbFocusByMedia = null;
   openLightboxAt(0, { wrap: true, fullscreen: true, play: true });
 });
+function exportFileName(header, fallback) {
+  const star = header && /filename\*=(?:UTF-8|utf-8)''([^;]+)/.exec(header);
+  let name = "";
+  if (star) {
+    try { name = decodeURIComponent(star[1].trim()); } catch { name = ""; }
+  }
+  if (!name && header) {
+    const quoted = /filename="([^"]+)"/.exec(header);
+    const plain = /filename=([^;]+)/.exec(header);
+    name = (quoted && quoted[1]) || (plain && plain[1].trim()) || "";
+  }
+  name = name.split(/[\\/]/).pop().replace(/[\u0000-\u001f]/g, "").trim();
+  return name || fallback;
+}
+
+async function exportFileHandle(dir, name) {
+  const dot = name.lastIndexOf(".");
+  const stem = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : "";
+  let candidate = name;
+  for (let n = 2; n < 10000; n += 1) {
+    try {
+      await dir.getFileHandle(candidate);
+      candidate = `${stem}_${n}${ext}`;
+    } catch (err) {
+      if (err && err.name === "NotFoundError") {
+        return dir.getFileHandle(candidate, { create: true });
+      }
+      throw err;
+    }
+  }
+  throw new Error(name);
+}
+
+async function exportOriginalsToDirectory(dir, ids) {
+  let copied = 0;
+  const errors = [];
+  for (const id of ids) {
+    try {
+      const res = await fetch(`/api/media/${id}/file`, { credentials: "same-origin" });
+      if (!res.ok) throw new Error(String(res.status));
+      const handle = await exportFileHandle(
+        dir,
+        exportFileName(res.headers.get("Content-Disposition"), `photo-${id}`)
+      );
+      const writable = await handle.createWritable();
+      if (res.body && typeof res.body.pipeTo === "function") {
+        await res.body.pipeTo(writable);
+      } else {
+        await writable.write(await res.blob());
+        await writable.close();
+      }
+      copied += 1;
+    } catch (err) {
+      errors.push(err && err.message ? err.message : String(id));
+    }
+  }
+  return { copied, errors };
+}
+
+function setExportBusy(busy) {
+  for (const id of ["exportCopy", "exportZip"]) {
+    const btn = $(id);
+    if (btn) btn.disabled = busy;
+  }
+}
+
 $("btnExport").addEventListener("click", () => {
   if (!state.selected.size) {
     askSelectPhotos(tr("export.need"));
@@ -3734,9 +3801,7 @@ $("btnExport").addEventListener("click", () => {
   }
   $("exportCount").textContent = trn(state.selected.size, "unit.file.one", "unit.file.many");
   $("exportMsg").textContent = "";
-  if (!$("exportDest").value) {
-    $("exportDest").placeholder = "Downloads/photo-export";
-  }
+  setExportBusy(false);
   $("exportDlg").showModal();
 });
 $("exportForm").addEventListener("submit", async (ev) => {
@@ -3748,19 +3813,32 @@ $("exportForm").addEventListener("submit", async (ev) => {
     return;
   }
   const ids = [...state.selected];
-  $("exportMsg").textContent = tr("ui.exportRun");
+  if (value === "copy" && typeof window.showDirectoryPicker !== "function") {
+    $("exportMsg").textContent = tr("export.needDest");
+    return;
+  }
+  setExportBusy(true);
   try {
     if (value === "copy") {
-      const dest = $("exportDest").value.trim();
-      if (!dest) throw new Error(tr("export.needDest"));
-      const data = await api("/api/export/copy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids, dest }),
-      });
-      $("exportMsg").textContent = trf("export.copied", { n: data.copied, dest: data.dest }) +
-        (data.errors.length ? " · " + trn(data.errors.length, "export.err.one", "export.err.many") : "");
+      let dir;
+      try {
+        dir = await window.showDirectoryPicker({ mode: "readwrite", id: "galerie-export" });
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        throw err;
+      }
+      $("exportMsg").textContent = tr("ui.exportRun");
+      const data = await exportOriginalsToDirectory(dir, ids);
+      if (data.errors.length || !data.copied) {
+        const fail = trn(data.errors.length || ids.length, "export.err.one", "export.err.many");
+        $("exportMsg").textContent = data.copied
+          ? trf("export.copied", { n: data.copied, dest: dir.name || "" }) + " · " + fail
+          : fail;
+        return;
+      }
+      $("exportDlg").close();
     } else if (value === "zip") {
+      $("exportMsg").textContent = tr("ui.exportRun");
       const res = await api("/api/export/zip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -3772,11 +3850,13 @@ $("exportForm").addEventListener("submit", async (ev) => {
       a.href = url;
       a.download = "photos.zip";
       a.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
       $("exportDlg").close();
     }
   } catch (err) {
     $("exportMsg").textContent = err.message;
+  } finally {
+    setExportBusy(false);
   }
 });
 $("btnDelete").addEventListener("click", () => {
