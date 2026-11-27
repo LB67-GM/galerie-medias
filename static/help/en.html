@@ -26,7 +26,7 @@
   </header>
   <article id="helpArticle" class="help-doc">
     <h1>Help</h1>
-    <p>Galerie Médias, version 3.0. This guide describes each menu, in the order you see them. The same text exists in French, Spanish, and German: change the language at the top right, then open <strong>?</strong> again.</p>
+    <p>Galerie Médias, version 4.0. This guide describes each menu, in the order you see them. The same text exists in French, Spanish, and German: change the language at the top right, then open <strong>?</strong> again.</p>
     <nav class="toc" aria-label="On this page">
       <ol>
         <li><a href="#help-application">The application</a></li>
@@ -35,6 +35,7 @@
         <li><a href="#help-connexion">Sign in</a></li>
         <li><a href="#help-mot-de-passe">Forgot password</a></li>
         <li><a href="#help-photos">Photos</a></li>
+        <li><a href="#help-cinema">Cinema</a></li>
         <li><a href="#help-personnes">People</a></li>
         <li><a href="#help-scenes">Scenes</a></li>
         <li><a href="#help-doublons">Duplicates</a></li>
@@ -166,6 +167,18 @@ sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/A
       <li><strong>Delete</strong> sends the selection to Trash for 30 days, after you confirm. The limit is 500 files at a time.</li>
     </ul>
     <p>In the large view, <strong>Rotate / crop</strong> keeps the edited photo in the gallery and puts the original in Trash. <strong>Restore</strong>, in Trash, brings the original back.</p>
+
+    <h2 id="help-cinema">Cinema</h2>
+    <p>Available to both administrator and <strong>viewer</strong> accounts. This tab collects your movies, series, documentaries, and music clips from the folder configured in <strong>Settings → Cinema</strong> (for example <code>/mnt/cinema</code>).</p>
+    <ul>
+      <li><strong>Supported formats</strong>: video files (<code>.mp4</code>, <code>.m4v</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mpg</code>, <code>.mov</code>…), <strong>DVD</strong> folders or images (<code>VIDEO_TS</code>, <code>.iso</code>), and <strong>Blu-ray</strong> structures (<code>BDMV</code>, <code>.iso</code>).</li>
+      <li><strong>Browser playback (HLS)</strong>: playback starts in seconds via on-the-fly HLS streaming (<code>hls.js</code>, Apache 2.0), with audio track selection, subtitles, chapters, quality presets, and automatic <strong>resume</strong> (<em>Continue watching</em>). Shortcuts: <code>Space</code> (pause), <code>F</code> (fullscreen), Left/Right arrows (±10 s).</li>
+      <li><strong>Filters &amp; Wikidata enrichment</strong>: filter by <strong>Type</strong> (Movie, Series, Music clip, Documentary), <strong>Category</strong> (Crime, Drama, Comedy, Thriller, Sci-Fi…), <strong>Year</strong>, or search. An administrator clicks <strong>Index Cinema</strong> then <strong>Enrich (Wikidata)</strong> to populate categories, year, director, and overview from Wikidata (CC0 open data, no API key required). The <strong>✎</strong> button lets you edit and lock details manually.</li>
+      <li><strong>Physical optical drive (optional)</strong>: set your native drive in <strong>Settings → Cinema</strong> (e.g. <code>/dev/sr0</code> on Linux or <code>D:\</code> on Windows) to show the <strong>Play disc</strong> button. Leave empty on a server without an optical drive. Encrypted commercial discs (CSS/AACS/BD+) require separate system libraries not bundled with Galerie Médias.</li>
+      <li><strong>Television (DLNA)</strong>: the <strong>TV</strong> button inside the player sends a video file to an LG or Samsung TV on the same local network (port 8766).</li>
+      <li><strong>Cinema Trash</strong>: an administrator can move a movie or clip to trash (<strong>🗑</strong> button on the card or <strong>Delete</strong> in the player). The file moves into <code>.corbeille/</code> inside the Cinema folder for 30 days and can be restored or permanently deleted from the <strong>Trash</strong> tab.</li>
+      <li><strong>Two separate indexes</strong>: <strong>Index Photos</strong> (top Tools bar) indexes only your <strong>Photos</strong> library (by year or whole library). <strong>Index Cinema</strong> (in the <strong>Cinema</strong> tab or <strong>Settings → Cinema</strong>) indexes only the <strong>Cinema</strong> folder.</li>
+    </ul>
 
     <h2 id="help-personnes">People</h2>
     <p>Administrators only. Recognition stays on this computer: no face is sent anywhere else.</p>

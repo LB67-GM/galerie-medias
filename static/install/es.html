@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Instalación</h1>
-    <p>Galerie Médias, versión 3.0. El sitio permanece en su ordenador. Las fotos pueden quedarse en un disco USB. La base (SQLite, miniaturas, ajustes) permanece siempre en el ordenador, nunca en el USB. El sitio solo escucha en HTTPS.</p>
+    <p>Galerie Médias, versión 4.0. El sitio permanece en su ordenador. Las fotos pueden quedarse en un disco USB. La base (SQLite, miniaturas, ajustes) permanece siempre en el ordenador, nunca en el USB. El sitio solo escucha en HTTPS.</p>
     <p>La misma guía existe en <a href="fr.html" hreflang="fr">francés</a>, en <a href="en.html" hreflang="en">inglés</a> y en <a href="de.html" hreflang="de">alemán</a>. El uso de los menús está en la ayuda <strong>?</strong>.</p>
 
     <h2>Dónde están los archivos</h2>
@@ -82,12 +82,13 @@
       <li>Conecte el disco y espere a que aparezca.</li>
       <li>Pestaña <strong>Ajustes</strong>. Indique la carpeta de las fotos y luego <strong>Guardar</strong>.</li>
       <li>Clasifique antes de indexar. Fotos sueltas o ya por año: <code>classer-lieux.bat</code> (Windows) o <code>classer-lieux-mac.command</code>. Árbol dispar, por ejemplo DCIM: primero <code>classer-annee-mois</code>, luego <code>classer-lieux</code>. La opción 1 simula, la opción 2 escribe. En Linux: <code>.venv/bin/python tools/sort_annee_mois.py ORIGEN DESTINO</code>, luego <code>.venv/bin/python tools/sort_lieux.py -d DESTINO</code>. Añada <code>--apply</code> para escribir.</li>
-      <li>En el sitio: <strong>Indexar</strong>. Espere al final.</li>
+      <li>En el sitio: <strong>Indexar Fotos</strong>. Espere al final.</li>
+      <li><em>(Opcional)</em> Para películas, series y clips: indique la carpeta en <strong>Ajustes → Cine</strong>, guarde y pulse <strong>Indexar Cine</strong>.</li>
     </ol>
     <p>Las carpetas creadas se llaman <code>Annee 2024</code> y <code>Juin 2024</code>. Esos nombres permanecen en francés en el disco.</p>
 
-    <h2>Actualización</h2>
-    <p>Cierre la ventana del sitio. Descomprima el zip nuevo sobre la misma carpeta. No borre GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> (Linux). No vuelva a copiar las fotos. Luego <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, o vuelva a lanzar <code>start-linux.sh</code>. Recargue la página. El detalle está en <code>MISE-A-JOUR-es.md</code>. Los requisitos están en <code>REQUIS-es.md</code>.</p>
+    <h2>Actualización (de 3.0 a 4.0)</h2>
+    <p>Cierre la ventana del sitio (o pare el servicio systemd en Linux). Descomprima el zip nuevo sobre la misma carpeta. No borre GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). No vuelva a copiar ni a reindexar la biblioteca de Fotos: SQLite y los ajustes migran automáticamente a la 4.0. Luego ejecute <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, o reinicie <code>start-linux.sh</code> / el servicio, y recargue con <strong>Ctrl+F5</strong>. Para activar <strong>Cine</strong>, indique su carpeta de vídeos en <strong>Ajustes → Cine</strong> y pulse <strong>Indexar Cine</strong>. El detalle completo está en <code>MISE-A-JOUR-es.md</code>.</p>
 
     <h2>Si la página no se abre</h2>
     <ul>

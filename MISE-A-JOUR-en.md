@@ -1,14 +1,20 @@
-# Galerie Médias 3.0 — update a site that is already installed
+# Galerie Médias 4.0 — update a site that is already installed
 
 Use this file when the site is already running. First install: [INSTALL-en.md](INSTALL-en.md).
 
 Other languages: [Français](MISE-A-JOUR-fr.md), [Español](MISE-A-JOUR-es.md), [Deutsch](MISE-A-JOUR-de.md).
 
-After the update, **Settings** shows **Galerie Médias 3.0** (also at the top left).
+After the update, **Settings** shows **Galerie Médias 4.0** (also at the top left).
 
-## What is new in 3.0
+## What is new in 4.0
 
-- Menus: **Photos, People, Scenes, Duplicates, Map, Albums, Trash, Settings**.
+- New **Cinema** tab (available to both administrator and **viewer** accounts): built-in open-source video player with live **HLS streaming** (`hls.js`), audio tracks, subtitles, chapters, quality presets, and **Continue watching**.
+- Supported formats in Cinema: video files (`.mp4`, `.m4v`, `.mkv`, `.avi`, `.mpg`, `.mov`…), **DVD** folders/images (`VIDEO_TS`, `.iso`), **Blu-ray** folders/images (`BDMV`, `.iso`), and optional native **optical drive** (leave empty on a server without a drive).
+- Filters by **Type** (Movie, Series, Music clip, Documentary), **Category**, and **Year**, with on-demand **Wikidata / Wikipedia** enrichment (CC0 open data, no API key) and lockable manual editing.
+- **TV (DLNA)** casting inside the Cinema player (port `8766` on the local network).
+- Automatic SQLite and settings migration: in **Settings → Cinema**, enter your video folder (e.g. `/mnt/cinema`), save, then click **Index Cinema**.
+- Two separate indexing actions: **Index Photos** (top toolbar, for the Photos library) and **Index Cinema** (Cinema tab or Settings → Cinema, for movies/series/clips). Movies and clips can be moved to **Trash** (30 days, restorable or permanently deletable).
+- Menus: **Photos, Cinema, People, Scenes, Duplicates, Map, Albums, Trash, Settings**.
 - Language (French, English, Spanish, German) and colour theme, top right. The choice stays in this browser.
 - **Forgot password**: in Settings → Email, enter the server and the site address, then each account’s email. The link lasts one hour.
 - The **Amber** theme is unchanged. The others: Ink, Ocean, Forest, Paper, Daylight.
@@ -16,6 +22,17 @@ After the update, **Settings** shows **Galerie Médias 3.0** (also at the top le
 - The site listens only on **HTTPS**.
 
 **Photos** and the **database** (faces, albums, accounts) stay where they are. Only the program is replaced.
+
+## Upgrading from 3.0 to 4.0: automatic migration and enabling Cinema
+
+- **Automatic on first start in 4.0**: your photos, faces, scenes, albums, accounts, settings (`config.json`), and HTTPS certificates stay untouched. SQLite automatically creates the new **Cinema** tables (catalog, categories, resume progress, and 30-day trash). No new Python package is required and you **do not need to re-index your photos**.
+- **If you do not use Cinema yet**: nothing to change; the Photos gallery keeps working just like in 3.0.
+- **To enable the Cinema tab after updating**:
+  1. Open **Settings → Cinema**.
+  2. Enter the **Cinema folder** containing your movies, series, clips, or DVD/Blu-ray folders (e.g. `/mnt/cinema` or `D:\Videos\Cinema`).
+  3. *(Optional)* Enter your native **Physical optical drive** (e.g. `/dev/sr0`, `/Volumes/...`, or `D:\`). Leave blank on a computer or server without an optical drive.
+  4. Click **Save**, then **Index Cinema** (separate from **Index Photos** in the top Tools bar).
+  5. *(Optional)* Click **Enrich (Wikidata)** to automatically populate categories, release years, directors, and summaries (CC0 open data, no API key required).
 
 ## Windows
 
@@ -26,7 +43,7 @@ After the update, **Settings** shows **Galerie Médias 3.0** (also at the top le
 5. Double-click `reparer-installation.bat` and wait until the window finishes.
 6. Double-click `ouvrir-galerie.bat`.
 7. In the browser: **Ctrl+F5**.
-8. Settings: **Galerie Médias 3.0**.
+8. Settings: **Galerie Médias 4.0**.
 
 There is no need to index everything again. The television also uses port **8766**: run `autoriser-parefeu.bat` once if the TV cannot see the site.
 
@@ -37,15 +54,15 @@ There is no need to index everything again. The television also uses port **8766
 3. Do not touch `Library/Application Support/GaleriePhotos`.
 4. Double-click `reparer-installation-mac.command`, or start `start-mac.command` again.
 5. Reload the page (Cmd+Shift+R).
-6. Settings: **Galerie Médias 3.0**.
+6. Settings: **Galerie Médias 4.0**.
 
 ## Linux
 
-1. Stop the site (close the terminal, or stop the service if there is one).
+1. Stop the site (close the terminal, or run `systemctl --user stop photo-library.service` if using a systemd service).
 2. Replace the program files in the same folder. Do not delete `~/.config/galerie-photos/` or `~/.cache/photo-library/`.
-3. Run `bash start-linux.sh` again. If `REQUIS-en.md` changed, the script updates the packages.
-4. Reload the page (Ctrl+F5).
-5. Settings: **Galerie Médias 3.0**.
+3. Run `bash start-linux.sh` again (or `systemctl --user start photo-library.service`). If `REQUIS-en.md` changed, `start-linux.sh` updates the packages.
+4. Reload the page (**Ctrl+F5**).
+5. Settings: **Galerie Médias 4.0**. *(Optional: mount your video folder, e.g. `/mnt/cinema`, then configure it in **Settings → Cinema**.)*
 
 ## Do not
 

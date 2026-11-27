@@ -120,6 +120,54 @@ CREATE TABLE IF NOT EXISTS meta (
     value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS cinema_items (
+    id INTEGER PRIMARY KEY,
+    source_type TEXT NOT NULL DEFAULT 'file',
+    relpath TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    media_type TEXT NOT NULL DEFAULT 'movie',
+    year INTEGER,
+    season INTEGER,
+    episode INTEGER,
+    director TEXT NOT NULL DEFAULT '',
+    overview TEXT NOT NULL DEFAULT '',
+    wikidata_id TEXT NOT NULL DEFAULT '',
+    metadata_locked INTEGER NOT NULL DEFAULT 0,
+    duration_s REAL,
+    width INTEGER,
+    height INTEGER,
+    size INTEGER NOT NULL DEFAULT 0,
+    mtime_ns INTEGER NOT NULL DEFAULT 0,
+    poster_ok INTEGER NOT NULL DEFAULT 0,
+    present INTEGER NOT NULL DEFAULT 1,
+    indexed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS cinema_item_categories (
+    item_id INTEGER NOT NULL REFERENCES cinema_items(id) ON DELETE CASCADE,
+    category TEXT NOT NULL,
+    PRIMARY KEY (item_id, category)
+);
+
+CREATE TABLE IF NOT EXISTS cinema_progress (
+    user_key TEXT NOT NULL,
+    item_key TEXT NOT NULL,
+    title_index INTEGER NOT NULL DEFAULT 0,
+    position_s REAL NOT NULL DEFAULT 0,
+    duration_s REAL NOT NULL DEFAULT 0,
+    audio_idx INTEGER,
+    subtitle_idx INTEGER,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (user_key, item_key, title_index)
+);
+
+CREATE TABLE IF NOT EXISTS cinema_trash (
+    item_id INTEGER PRIMARY KEY REFERENCES cinema_items(id) ON DELETE CASCADE,
+    orig_relpath TEXT NOT NULL,
+    trash_relpath TEXT NOT NULL,
+    trashed_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_media_year ON media(year);
 CREATE INDEX IF NOT EXISTS idx_media_place ON media(place);
 CREATE INDEX IF NOT EXISTS idx_media_kind ON media(kind);
@@ -312,6 +360,74 @@ def init_schema(conn: sqlite3.Connection, *, refresh_places: bool = True) -> Non
         )
         """
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS cinema_items (
+            id INTEGER PRIMARY KEY,
+            source_type TEXT NOT NULL DEFAULT 'file',
+            relpath TEXT NOT NULL UNIQUE,
+            title TEXT NOT NULL,
+            media_type TEXT NOT NULL DEFAULT 'movie',
+            year INTEGER,
+            season INTEGER,
+            episode INTEGER,
+            director TEXT NOT NULL DEFAULT '',
+            overview TEXT NOT NULL DEFAULT '',
+            wikidata_id TEXT NOT NULL DEFAULT '',
+            metadata_locked INTEGER NOT NULL DEFAULT 0,
+            duration_s REAL,
+            width INTEGER,
+            height INTEGER,
+            size INTEGER NOT NULL DEFAULT 0,
+            mtime_ns INTEGER NOT NULL DEFAULT 0,
+            poster_ok INTEGER NOT NULL DEFAULT 0,
+            present INTEGER NOT NULL DEFAULT 1,
+            indexed_at TEXT
+        )
+        """
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS cinema_item_categories (
+            item_id INTEGER NOT NULL REFERENCES cinema_items(id) ON DELETE CASCADE,
+            category TEXT NOT NULL,
+            PRIMARY KEY (item_id, category)
+        )
+        """
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS cinema_progress (
+            user_key TEXT NOT NULL,
+            item_key TEXT NOT NULL,
+            title_index INTEGER NOT NULL DEFAULT 0,
+            position_s REAL NOT NULL DEFAULT 0,
+            duration_s REAL NOT NULL DEFAULT 0,
+            audio_idx INTEGER,
+            subtitle_idx INTEGER,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (user_key, item_key, title_index)
+        )
+        """
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cinema_items_present ON cinema_items(present)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cinema_items_type ON cinema_items(media_type)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cinema_items_year ON cinema_items(year)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cinema_cat_cat ON cinema_item_categories(category)")
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_cinema_progress_user ON cinema_progress(user_key, updated_at)"
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS cinema_trash (
+            item_id INTEGER PRIMARY KEY REFERENCES cinema_items(id) ON DELETE CASCADE,
+            orig_relpath TEXT NOT NULL,
+            trash_relpath TEXT NOT NULL,
+            trashed_at TEXT NOT NULL
+        )
+        """
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_cinema_trash_at ON cinema_trash(trashed_at)")
     conn.commit()
     from photo_library.albums import ensure_favorites_album
 

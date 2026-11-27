@@ -26,7 +26,7 @@
   </header>
   <article id="helpArticle" class="help-doc">
     <h1>Aide</h1>
-    <p>Galerie Médias, version 3.0. Ce guide décrit chaque menu, dans l’ordre où vous les voyez. Le même texte existe en anglais, en espagnol et en allemand : changez la langue en haut à droite, puis rouvrez <strong>?</strong>.</p>
+    <p>Galerie Médias, version 4.0. Ce guide décrit chaque menu, dans l’ordre où vous les voyez. Le même texte existe en anglais, en espagnol et en allemand : changez la langue en haut à droite, puis rouvrez <strong>?</strong>.</p>
     <nav class="toc" aria-label="Sommaire">
       <ol>
         <li><a href="#help-application">L’application</a></li>
@@ -35,6 +35,7 @@
         <li><a href="#help-connexion">Connexion</a></li>
         <li><a href="#help-mot-de-passe">Mot de passe oublié</a></li>
         <li><a href="#help-photos">Photos</a></li>
+        <li><a href="#help-cinema">Cinéma</a></li>
         <li><a href="#help-personnes">Personnes</a></li>
         <li><a href="#help-scenes">Scènes</a></li>
         <li><a href="#help-doublons">Doublons</a></li>
@@ -166,6 +167,18 @@ sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/A
       <li><strong>Supprimer</strong> envoie la sélection à la corbeille pour 30 jours, après confirmation. La limite est de 500 fichiers à la fois.</li>
     </ul>
     <p>En grand format, <strong>Pivoter / rogner</strong> garde la photo modifiée dans la galerie et place l’original à la corbeille. <strong>Restaurer</strong>, dans Corbeille, remet l’original.</p>
+
+    <h2 id="help-cinema">Cinéma</h2>
+    <p>Accessible aux comptes administrateur et <strong>lecture</strong>. Cet onglet rassemble vos films, séries, documentaires et clips musicaux à partir du dossier indiqué dans <strong>Paramètres → Cinéma</strong> (par exemple <code>/mnt/cinema</code>).</p>
+    <ul>
+      <li><strong>Formats pris en charge</strong> : fichiers vidéo (<code>.mp4</code>, <code>.m4v</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mpg</code>, <code>.mov</code>…), dossiers ou images <strong>DVD</strong> (<code>VIDEO_TS</code>, <code>.iso</code>) et <strong>Blu-ray</strong> (<code>BDMV</code>, <code>.iso</code>).</li>
+      <li><strong>Lecture dans le navigateur (HLS)</strong> : la vidéo démarre en quelques secondes grâce au streaming HLS à la volée (<code>hls.js</code>, licence Apache 2.0), avec choix de la piste audio, des sous-titres, des chapitres, de la qualité et <strong>reprise de lecture</strong> automatique (<em>Continuer la lecture</em>). Raccourcis : <code>Espace</code> (pause), <code>F</code> (plein écran), flèches gauche/droite (±10 s).</li>
+      <li><strong>Filtres et enrichissement Wikidata</strong> : filtrez par <strong>Type</strong> (Film, Série, Clip musical, Documentaire), <strong>Catégorie</strong> (Policier, Drame, Comédie, Thriller, Science-fiction…), <strong>Année</strong> ou recherche. Un administrateur clique <strong>Indexer Cinéma</strong> puis <strong>Enrichir (Wikidata)</strong> pour récupérer automatiquement catégories, année, réalisateur et résumé depuis Wikidata (données ouvertes CC0, sans clé API). Le bouton <strong>✎</strong> permet de corriger manuellement une fiche et de la verrouiller.</li>
+      <li><strong>Lecteur optique physique (optionnel)</strong> : indiquez votre lecteur natif dans <strong>Paramètres → Cinéma</strong> (ex. <code>/dev/sr0</code> sous Linux ou <code>D:\</code> sous Windows) pour afficher le bouton <strong>Lire le disque</strong>. Laissez vide sur un serveur sans lecteur. Les disques commerciaux chiffrés (CSS/AACS/BD+) nécessitent des bibliothèques système séparées non fournies avec Galerie Médias.</li>
+      <li><strong>Télévision (DLNA)</strong> : le bouton <strong>Télé</strong> dans le lecteur envoie un fichier vidéo vers une télé LG ou Samsung sur le même réseau local (port 8766).</li>
+      <li><strong>Corbeille Cinéma</strong> : un administrateur peut mettre un film ou un clip à la corbeille (bouton <strong>🗑</strong> sur la carte ou <strong>Supprimer</strong> dans le lecteur). Le fichier est déplacé dans <code>.corbeille/</code> du dossier Cinéma pendant 30 jours et peut être restauré ou effacé définitivement depuis l’onglet <strong>Corbeille</strong>.</li>
+      <li><strong>Deux index séparés</strong> : le bouton <strong>Indexer Photos</strong> (barre Outils en haut) indexe uniquement votre bibliothèque <strong>Photos</strong> (avec le sélecteur d’année ou « Toute la bibliothèque »). Le bouton <strong>Indexer Cinéma</strong> (dans l’onglet <strong>Cinéma</strong> ou <strong>Paramètres → Cinéma</strong>) indexe uniquement le dossier <strong>Cinéma</strong>.</li>
+    </ul>
 
     <h2 id="help-personnes">Personnes</h2>
     <p>Réservé à l’administrateur. La reconnaissance reste sur cet ordinateur : aucun visage n’est envoyé ailleurs.</p>

@@ -26,7 +26,7 @@
   </header>
   <article id="helpArticle" class="help-doc">
     <h1>Hilfe</h1>
-    <p>Galerie Médias, Version 3.0. Diese Anleitung beschreibt jedes Menü, in der Reihenfolge, in der Sie es sehen. Derselbe Text gibt es auf Französisch, Englisch und Spanisch: ändern Sie die Sprache oben rechts und öffnen Sie <strong>?</strong> erneut.</p>
+    <p>Galerie Médias, Version 4.0. Diese Anleitung beschreibt jedes Menü, in der Reihenfolge, in der Sie es sehen. Derselbe Text gibt es auf Französisch, Englisch und Spanisch: ändern Sie die Sprache oben rechts und öffnen Sie <strong>?</strong> erneut.</p>
     <nav class="toc" aria-label="Auf dieser Seite">
       <ol>
         <li><a href="#help-application">Die Anwendung</a></li>
@@ -35,6 +35,7 @@
         <li><a href="#help-connexion">Anmeldung</a></li>
         <li><a href="#help-mot-de-passe">Passwort vergessen</a></li>
         <li><a href="#help-photos">Fotos</a></li>
+        <li><a href="#help-cinema">Kino</a></li>
         <li><a href="#help-personnes">Personen</a></li>
         <li><a href="#help-scenes">Szenen</a></li>
         <li><a href="#help-doublons">Duplikate</a></li>
@@ -166,6 +167,18 @@ sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/A
       <li><strong>Löschen</strong> legt die Auswahl nach der Bestätigung für 30 Tage in den Papierkorb. Die Grenze liegt bei 500 Dateien auf einmal.</li>
     </ul>
     <p>In der großen Ansicht behält <strong>Drehen / zuschneiden</strong> das bearbeitete Foto in der Galerie und legt das Original in den Papierkorb. <strong>Wiederherstellen</strong> im Papierkorb bringt das Original zurück.</p>
+
+    <h2 id="help-cinema">Kino</h2>
+    <p>Für Administrator- und <strong>Lesekonten</strong> verfügbar. Dieser Reiter sammelt Filme, Serien, Dokumentationen und Musikclips aus dem unter <strong>Einstellungen → Kino</strong> gewählten Ordner (z. B. <code>/mnt/cinema</code>).</p>
+    <ul>
+      <li><strong>Unterstützte Formate</strong>: Videodateien (<code>.mp4</code>, <code>.m4v</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mpg</code>, <code>.mov</code>…), <strong>DVD</strong>-Ordner oder -Images (<code>VIDEO_TS</code>, <code>.iso</code>) und <strong>Blu-ray</strong>-Strukturen (<code>BDMV</code>, <code>.iso</code>).</li>
+      <li><strong>Wiedergabe im Browser (HLS)</strong>: Videos starten dank Live-HLS-Streaming (<code>hls.js</code>, Apache 2.0) in wenigen Sekunden – inklusive Tonspurwahl, Untertiteln, Kapiteln, Qualitätsstufen und automatischem <strong>Weiterschauen</strong>. Tastenkürzel: <code>Leertaste</code> (Pause), <code>F</code> (Vollbild), Pfeiltasten links/rechts (±10 s).</li>
+      <li><strong>Filter &amp; Wikidata-Anreicherung</strong>: Filtern nach <strong>Typ</strong> (Film, Serie, Musikclip, Dokumentation), <strong>Kategorie</strong> (Krimi, Drama, Komödie, Thriller, Sci-Fi…), <strong>Jahr</strong> oder Suche. Eine Verwaltung klickt auf <strong>Kino indizieren</strong> und dann <strong>Anreichern (Wikidata)</strong>, um Kategorien, Jahr, Regisseur und Beschreibung über Wikidata (CC0 Open Data, ohne API-Schlüssel) zu laden. Mit <strong>✎</strong> lassen sich Angaben manuell bearbeiten und sperren.</li>
+      <li><strong>Physisches optisches Laufwerk (optional)</strong>: Tragen Sie Ihr lokales Laufwerk unter <strong>Einstellungen → Kino</strong> ein (z. B. <code>/dev/sr0</code> unter Linux oder <code>D:\</code> unter Windows), um <strong>Disc abspielen</strong> anzuzeigen. Auf einem Server ohne Laufwerk einfach leer lassen. Kopiergeschützte Kauf-Discs (CSS/AACS/BD+) erfordern separate Systembibliotheken, die nicht Teil von Galerie Médias sind.</li>
+      <li><strong>Fernseher (DLNA)</strong>: Über die Schaltfläche <strong>TV</strong> im Player senden Sie eine Videodatei an einen LG- oder Samsung-Fernseher im selben Heimnetz (Port 8766).</li>
+      <li><strong>Kino-Papierkorb</strong>: Eine Verwaltung kann einen Film oder Clip in den Papierkorb verschieben (Schaltfläche <strong>🗑</strong> auf der Karte oder <strong>Löschen</strong> im Player). Die Datei landet für 30 Tage in <code>.corbeille/</code> im Kino-Ordner und lässt sich im Reiter <strong>Papierkorb</strong> wiederherstellen oder endgültig löschen.</li>
+      <li><strong>Zwei getrennte Indizes</strong>: <strong>Fotos indizieren</strong> (oben unter Werkzeuge) indiziert ausschließlich die <strong>Fotos</strong>-Bibliothek. <strong>Kino indizieren</strong> (im Reiter <strong>Kino</strong> oder unter <strong>Einstellungen → Kino</strong>) indiziert ausschließlich den <strong>Kino</strong>-Ordner.</li>
+    </ul>
 
     <h2 id="help-personnes">Personen</h2>
     <p>Nur für die Verwaltung. Die Erkennung bleibt auf diesem Computer: kein Gesicht wird woandershin gesendet.</p>

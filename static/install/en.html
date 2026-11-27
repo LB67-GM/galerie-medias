@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Installation</h1>
-    <p>Galerie Médias, version 3.0. The site stays on your computer. Photos may stay on a USB disk. The database (SQLite, thumbnails, settings) always stays on the computer, never on the USB disk. The site listens only on HTTPS.</p>
+    <p>Galerie Médias, version 4.0. The site stays on your computer. Photos may stay on a USB disk. The database (SQLite, thumbnails, settings) always stays on the computer, never on the USB disk. The site listens only on HTTPS.</p>
     <p>The same guide exists in <a href="fr.html" hreflang="fr">French</a>, <a href="es.html" hreflang="es">Spanish</a>, and <a href="de.html" hreflang="de">German</a>. How the menus work is in the <strong>?</strong> help.</p>
 
     <h2>Where the files are</h2>
@@ -82,12 +82,13 @@
       <li>Plug in the disk and wait until it appears.</li>
       <li>Open <strong>Settings</strong>. Set the photo folder, then <strong>Save</strong>.</li>
       <li>Sort before indexing. Loose photos, or photos already by year: <code>classer-lieux.bat</code> (Windows) or <code>classer-lieux-mac.command</code>. A mixed tree, for example DCIM: first <code>classer-annee-mois</code>, then <code>classer-lieux</code>. Choice 1 previews, choice 2 writes. On Linux: <code>.venv/bin/python tools/sort_annee_mois.py SOURCE DEST</code>, then <code>.venv/bin/python tools/sort_lieux.py -d DEST</code>. Add <code>--apply</code> to write.</li>
-      <li>In the site: <strong>Index</strong>. Wait until it finishes.</li>
+      <li>In the site: <strong>Index Photos</strong>. Wait until it finishes.</li>
+      <li><em>(Optional)</em> For movies, series, and clips: set the folder in <strong>Settings → Cinema</strong>, save, then click <strong>Index Cinema</strong>.</li>
     </ol>
     <p>The folders created are named <code>Annee 2024</code> and <code>Juin 2024</code>. Those names stay in French on disk.</p>
 
-    <h2>Update</h2>
-    <p>Close the site window. Unpack the new zip over the same folder. Do not delete GaleriePhotos (Windows, macOS) or <code>~/.config/galerie-photos</code> (Linux). Do not copy the photos again. Then <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, or run <code>start-linux.sh</code> again. Reload the page. The detail is in <code>MISE-A-JOUR-en.md</code>. The requirements are in <code>REQUIS-en.md</code>.</p>
+    <h2>Update (from 3.0 to 4.0)</h2>
+    <p>Close the site window (or stop the systemd service on Linux). Unpack the new zip over the same folder. Do not delete GaleriePhotos (Windows, macOS) or <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). Do not copy or re-index the Photos library: SQLite and settings migrate automatically to 4.0. Then run <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, or restart <code>start-linux.sh</code> / the service, and reload with <strong>Ctrl+F5</strong>. To enable <strong>Cinema</strong>, set your video folder in <strong>Settings → Cinema</strong> and click <strong>Index Cinema</strong>. Full details are in <code>MISE-A-JOUR-en.md</code>.</p>
 
     <h2>If the page does not open</h2>
     <ul>

@@ -14,10 +14,23 @@ reparer-installation.log
 # Réglages, secrets et bases locales. Jamais dans le dépôt public.
 .env
 .env.*
+!.env.example
 *.pem
 *.key
 *.sqlite
 *.sqlite3
 *.db
 *.ses
+config.json
+cloudflare.ini
+*credentials*
+
+# Médias volumineux et caches de streaming locaux (Cinéma / tests).
+/hls/
+*.iso
+*.vob
+*.VOB
+*.m2ts
+*.mkv
+*.mp4
 
