@@ -99,9 +99,13 @@ def stage() -> Path:
     tools.mkdir()
     sort_src = ROOT.parent / "photo-sort-lieux" / "sort_lieux.py"
     if not sort_src.is_file():
+        sort_src = ROOT / "tools" / "sort_lieux.py"
+    if not sort_src.is_file():
         raise SystemExit(f"manquant : {sort_src}")
     shutil.copy2(sort_src, tools / "sort_lieux.py")
     mois_src = ROOT.parent / "photo-sort-lieux" / "sort_annee_mois.py"
+    if not mois_src.is_file():
+        mois_src = ROOT / "tools" / "sort_annee_mois.py"
     if not mois_src.is_file():
         raise SystemExit(f"manquant : {mois_src}")
     shutil.copy2(mois_src, tools / "sort_annee_mois.py")
