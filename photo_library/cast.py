@@ -22,7 +22,7 @@ from photo_library.tls import list_local_ipv4
 SSDP_ADDR = ("239.255.255.250", 1900)
 AV_TRANSPORT = "urn:schemas-upnp-org:device:MediaRenderer:1"
 AV_SERVICE = "urn:schemas-upnp-org:service:AVTransport:1"
-VARIANTS = frozenset({"preview", "play", "file"})
+VARIANTS = frozenset({"preview", "play", "file", "cinema"})
 TOKEN_TTL_S = 4 * 3600
 SOAP_TIMEOUT_S = 8
 SOAP_STOP_TIMEOUT_S = 2.5
@@ -418,6 +418,20 @@ def resolve_cast_file(
     media_id, variant = parse_token(secret, token)
     conn = connect(cache)
     try:
+        if variant == "cinema":
+            crow = conn.execute(
+                "SELECT * FROM cinema_items WHERE id=? AND present=1", (media_id,)
+            ).fetchone()
+            if crow is None:
+                raise FileNotFoundError("vidéo Cinéma introuvable")
+            dest = (
+                cache
+                / "cinema_cast"
+                / f"{media_id}-{int(crow['size'] or 0)}-{int(crow['mtime_ns'] or 0)}.mp4"
+            )
+            if dest.is_file() and dest.stat().st_size > 512:
+                return dest, "video/mp4"
+            raise FileNotFoundError("vidéo Cinéma pas encore préparée pour la TV")
         row = conn.execute(
             "SELECT * FROM media WHERE id=? AND present=1", (media_id,)
         ).fetchone()

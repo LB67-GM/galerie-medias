@@ -1,6 +1,6 @@
 # Galerie Médias — prérequis
 
-Version **3.0**. Autres langues : [English](REQUIS-en.md), [Español](REQUIS-es.md), [Deutsch](REQUIS-de.md).
+Version **4.0**. Autres langues : [English](REQUIS-en.md), [Español](REQUIS-es.md), [Deutsch](REQUIS-de.md).
 
 Installation pas à pas : [INSTALL-fr.md](INSTALL-fr.md).
 

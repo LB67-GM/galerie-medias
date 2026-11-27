@@ -1,14 +1,20 @@
-# Galerie Médias 3.0 — actualizar un sitio ya instalado
+# Galerie Médias 4.0 — actualizar un sitio ya instalado
 
 Este archivo sirve si el sitio ya funciona. Primera instalación: [INSTALL-es.md](INSTALL-es.md).
 
 Otros idiomas: [Français](MISE-A-JOUR-fr.md), [English](MISE-A-JOUR-en.md), [Deutsch](MISE-A-JOUR-de.md).
 
-Después de la actualización, **Ajustes** muestra **Galerie Médias 3.0** (también arriba a la izquierda).
+Después de la actualización, **Ajustes** muestra **Galerie Médias 4.0** (también arriba a la izquierda).
 
-## Novedades de la 3.0
+## Novedades de la 4.0
 
-- Menús: **Fotos, Personas, Escenas, Duplicados, Mapa, Álbumes, Papelera, Ajustes**.
+- Nueva pestaña **Cine** (para cuentas de administrador y de **lectura**): reproductor de vídeo de código abierto integrado con transmisión **HLS en directo** (`hls.js`), pistas de audio, subtítulos, capítulos, calidad y **Seguir viendo**.
+- Formatos compatibles en Cine: archivos de vídeo (`.mp4`, `.m4v`, `.mkv`, `.avi`, `.mpg`, `.mov`…), carpetas/imágenes **DVD** (`VIDEO_TS`, `.iso`), **Blu-ray** (`BDMV`, `.iso`) y **unidad óptica física** opcional (deje vacío en un servidor sin lector).
+- Filtros por **Tipo** (Película, Serie, Videoclip, Documental), **Categoría** y **Año**, con enriquecimiento bajo demanda desde **Wikidata / Wikipedia** (datos abiertos CC0, sin clave API) y edición manual bloqueable.
+- Botón **TV (DLNA)** integrado en el reproductor de Cine (puerto `8766` en la red local).
+- Migración automática de SQLite y ajustes: en **Ajustes → Cine**, indique su carpeta de vídeos (p. ej. `/mnt/cinema`), guarde y pulse **Indexar Cine**.
+- Dos indexaciones independientes: **Indexar Fotos** (barra superior, para la biblioteca de Fotos) e **Indexar Cine** (pestaña Cine o Ajustes → Cine, para películas/series/clips). Las películas y clips pueden enviarse a la **Papelera** (30 días, restaurables o eliminables definitivamente).
+- Menús: **Fotos, Cine, Personas, Escenas, Duplicados, Mapa, Álbumes, Papelera, Ajustes**.
 - Idioma (francés, inglés, español, alemán) y tema de color, arriba a la derecha. La elección se queda en este navegador.
 - **Contraseña olvidada**: en Ajustes → Correo, indique el servidor y la dirección del sitio, luego el correo de cada cuenta. El enlace dura una hora.
 - El tema **Ámbar** no cambia. Los otros: Tinta, Océano, Bosque, Papel, Día.
@@ -16,6 +22,17 @@ Después de la actualización, **Ajustes** muestra **Galerie Médias 3.0** (tamb
 - El sitio solo escucha en **HTTPS**.
 
 Las **fotos** y la **base** (rostros, álbumes, cuentas) no se mueven. Solo se sustituye el programa.
+
+## Pasar de 3.0 a 4.0: migración automática y activación de Cine
+
+- **Automático en el primer arranque de la 4.0**: sus fotos, rostros, escenas, álbumes, cuentas, ajustes (`config.json`) y certificados HTTPS permanecen intactos. SQLite crea automáticamente las nuevas tablas de **Cine** (catálogo, categorías, reanudación y papelera de 30 días). No se requiere ningún paquete Python adicional y **no hace falta volver a indexar las fotos**.
+- **Si aún no usa Cine**: no necesita cambiar nada; la galería de Fotos sigue funcionando igual que en la 3.0.
+- **Para activar la pestaña Cine después de actualizar**:
+  1. Abra **Ajustes → Cine**.
+  2. Indique la **Carpeta Cine** con sus películas, series, videoclips o carpetas DVD/Blu-ray (p. ej. `/mnt/cinema` o `D:\Videos\Cinema`).
+  3. *(Opcional)* Indique su **Unidad óptica física** nativa (p. ej. `/dev/sr0`, `/Volumes/...` o `D:\`). Déjelo vacío en un equipo o servidor sin lector óptico.
+  4. Pulse **Guardar** y luego **Indexar Cine** (independiente de **Indexar Fotos** en la barra superior).
+  5. *(Opcional)* Pulse **Enriquecer (Wikidata)** para completar categorías, año, director y resumen automáticamente (datos abiertos CC0, sin clave API).
 
 ## Windows
 
@@ -26,7 +43,7 @@ Las **fotos** y la **base** (rostros, álbumes, cuentas) no se mueven. Solo se s
 5. Doble clic en `reparer-installation.bat` y espere al final.
 6. Doble clic en `ouvrir-galerie.bat`.
 7. En el navegador: **Ctrl+F5**.
-8. Ajustes: **Galerie Médias 3.0**.
+8. Ajustes: **Galerie Médias 4.0**.
 
 No hace falta volver a indexar todo. El televisor usa también el puerto **8766**: `autoriser-parefeu.bat` una vez, si no ve el sitio.
 
@@ -37,15 +54,15 @@ No hace falta volver a indexar todo. El televisor usa también el puerto **8766*
 3. No toque `Biblioteca/Application Support/GaleriePhotos`.
 4. Doble clic en `reparer-installation-mac.command`, o vuelva a lanzar `start-mac.command`.
 5. Recargue la página (Cmd+Shift+R).
-6. Ajustes: **Galerie Médias 3.0**.
+6. Ajustes: **Galerie Médias 4.0**.
 
 ## Linux
 
-1. Pare el sitio (cierre el terminal, o pare el servicio si lo hay).
+1. Pare el sitio (cierre el terminal, o ejecute `systemctl --user stop photo-library.service` si usa un servicio systemd).
 2. Sustituya los archivos del programa en la misma carpeta. No borre `~/.config/galerie-photos/` ni `~/.cache/photo-library/`.
-3. Vuelva a lanzar `bash start-linux.sh`. Si `REQUIS-es.md` cambió, el script actualiza los paquetes.
-4. Recargue la página (Ctrl+F5).
-5. Ajustes: **Galerie Médias 3.0**.
+3. Vuelva a lanzar `bash start-linux.sh` (o `systemctl --user start photo-library.service`). Si `REQUIS-es.md` cambió, `start-linux.sh` actualiza los paquetes.
+4. Recargue la página (**Ctrl+F5**).
+5. Ajustes: **Galerie Médias 4.0**. *(Opcional: monte su carpeta de vídeos, por ejemplo `/mnt/cinema`, y configúrela en **Ajustes → Cine**.)*
 
 ## No haga esto
 

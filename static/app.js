@@ -1660,6 +1660,20 @@ async function loadSettings() {
   $("cfgLibrarySrc").value = data.library_src || "";
   $("cfgLibraryDest").value = data.library_dest || "";
   $("cfgBackupDir").value = data.backup_dir || "";
+  if ($("cfgCinemaDir")) $("cfgCinemaDir").value = data.cinema_dir || "";
+  if ($("cfgOpticalDevice")) $("cfgOpticalDevice").value = data.optical_device || "";
+  if ($("cfgCinemaStatus")) {
+    const st = data.cinema_status || {};
+    if (!st.configured) {
+      $("cfgCinemaStatus").textContent = tr("cinema.statusUnconfigured");
+    } else if (st.status === "ready") {
+      $("cfgCinemaStatus").textContent = tr("cinema.statusReady").replace("{path}", st.path || "");
+    } else if (st.status === "missing_mount") {
+      $("cfgCinemaStatus").textContent = tr("cinema.statusMissingMount").replace("{path}", st.path || "");
+    } else {
+      $("cfgCinemaStatus").textContent = tr("cinema.statusMissing").replace("{path}", st.path || "");
+    }
+  }
   const smtpHost = $("cfgSmtpHost");
   if (smtpHost) smtpHost.value = data.smtp_host || "";
   const smtpPort = $("cfgSmtpPort");
@@ -1711,6 +1725,8 @@ function renderJob(job) {
     "trash-purge": kindLabel("trash-purge"),
     "trash-expire": kindLabel("trash-expire"),
     faces: kindLabel("faces"),
+    "cinema-scan": tr("cinema.scan"),
+    "cinema-enrich": tr("cinema.enrich"),
   };
   const allExtras = $("btnCopiesTrashAll");
   if (allExtras) {
@@ -3140,13 +3156,19 @@ async function pollJob() {
     if (data.job.kind === "trash-expire") {
       await Promise.all([loadTrashView(), loadHealth()]);
     }
+    if (
+      (data.job.kind === "cinema-scan" || data.job.kind === "cinema-enrich") &&
+      window.GalerieCinema
+    ) {
+      window.GalerieCinema.refresh().catch(() => {});
+    }
   }
 }
 
 function setView(name) {
-  if (isViewer() && !["gallery", "map", "albums", "help"].includes(name)) name = "gallery";
+  if (isViewer() && !["gallery", "cinema", "map", "albums", "help"].includes(name)) name = "gallery";
   state.view = name;
-  const views = ["gallery", "help", "faces", "scenes", "copies", "map", "albums", "trash", "settings"];
+  const views = ["gallery", "cinema", "help", "faces", "scenes", "copies", "map", "albums", "trash", "settings"];
   for (const v of views) {
     const el = $(`view-${v}`);
     if (el) el.classList.toggle("hidden", name !== v);
@@ -3154,6 +3176,7 @@ function setView(name) {
   const galleryChrome = $("galleryChrome");
   if (galleryChrome) galleryChrome.classList.toggle("hidden", name !== "gallery");
   $("tabGallery").classList.toggle("on", name === "gallery");
+  if ($("tabCinema")) $("tabCinema").classList.toggle("on", name === "cinema");
   $("tabFaces").classList.toggle("on", name === "faces");
   if ($("tabScenes")) $("tabScenes").classList.toggle("on", name === "scenes");
   $("tabCopies").classList.toggle("on", name === "copies");
@@ -3166,6 +3189,10 @@ function setView(name) {
     loadFilters().catch((err) => {
       $("status").textContent = err.message || String(err);
     });
+  }
+  if (name === "cinema" && window.GalerieCinema) {
+    window.scrollTo(0, 0);
+    window.GalerieCinema.loadView();
   }
   if (name === "faces") {
     window.scrollTo(0, 0);
@@ -3369,6 +3396,7 @@ $("btnAddUser").addEventListener("click", async () => {
   }
 });
 $("tabGallery").addEventListener("click", () => setView("gallery"));
+if ($("tabCinema")) $("tabCinema").addEventListener("click", () => setView("cinema"));
 $("tabFaces").addEventListener("click", () => setView("faces"));
 $("tabScenes").addEventListener("click", () => setView("scenes"));
 $("tabCopies").addEventListener("click", () => setView("copies"));
@@ -3433,6 +3461,8 @@ async function saveSettingsForm(opts) {
       smtp_from: ($("cfgSmtpFrom") && $("cfgSmtpFrom").value.trim()) || "",
       smtp_tls: $("cfgSmtpTls") && $("cfgSmtpTls").checked ? "1" : "0",
       public_url: ($("cfgPublicUrl") && $("cfgPublicUrl").value.trim()) || "",
+      cinema_dir: ($("cfgCinemaDir") && $("cfgCinemaDir").value.trim()) || "",
+      optical_device: ($("cfgOpticalDevice") && $("cfgOpticalDevice").value.trim()) || "",
     }),
   });
   $("cfgApplePassword").value = "";
@@ -3987,6 +4017,23 @@ async function refreshCastDevices() {
 
 async function sendToTv() {
   if (!state.castDevice) return;
+  if (state.castCinemaItem) {
+    setCastMsg(trf("ui.castPrep", { name: state.castDevice.name }));
+    try {
+      const data = await api("/api/cast/cinema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          control_url: state.castDevice.control_url,
+          item_id: state.castCinemaItem.id,
+        }),
+      });
+      setCastMsg(data.note || trf("cast.on", { name: state.castDevice.name }));
+    } catch (err) {
+      setCastMsg(err.message || tr("ui.tvSendFail"));
+    }
+    return;
+  }
   if (!state.lbItem) {
     setCastMsg(tr("cast.openAgain"));
     return;
@@ -4017,12 +4064,15 @@ function maybeCastCurrent() {
   sendToTv();
 }
 
-function openCastDialog() {
+function openCastDialog(opts) {
+  state.castCinemaItem = opts && opts.cinemaItem ? opts.cinemaItem : null;
   const dlg = $("castDlg");
   if (!dlg) return;
   const lb = $("lightbox");
   const inner = $("lbInner");
-  if (lb && lb.open && inner) inner.appendChild(dlg);
+  const cinDlg = $("cinemaPlayerDlg");
+  if (state.castCinemaItem && cinDlg && cinDlg.open) cinDlg.appendChild(dlg);
+  else if (lb && lb.open && inner) inner.appendChild(dlg);
   else document.body.appendChild(dlg);
   if (!dlg.open) dlg.showModal();
   refreshCastDevices();
@@ -4749,6 +4799,9 @@ function updateTrashCountLabel(data) {
 }
 
 async function loadTrashView() {
+  if (window.GalerieCinema && window.GalerieCinema.loadTrash) {
+    window.GalerieCinema.loadTrash().catch(() => {});
+  }
   const grid = $("trashGrid");
   const count = $("trashCount");
   try {
@@ -5722,6 +5775,17 @@ $("lightbox").addEventListener("cancel", (ev) => {
     { passive: false }
   );
 })();
+
+window.GalerieBridge = {
+  api: api,
+  tr: tr,
+  isViewer: isViewer,
+  startJob: startJob,
+  setView: setView,
+  saveSettingsForm: saveSettingsForm,
+  openCastDialog: openCastDialog,
+  loadHealth: loadHealth,
+};
 
 (async function init() {
   initPrefs();

@@ -49,14 +49,22 @@ VIEWER_GET_EXACT = frozenset(
         "/api/media",
         "/api/media/ids",
         "/api/cast/devices",
+        "/api/cinema/status",
+        "/api/cinema/filters",
+        "/api/cinema/items",
+        "/api/cinema/continue",
+        "/api/cinema/disc",
     }
 )
 VIEWER_GET_RE = re.compile(
     r"^/api/media/\d+$"
     r"|^/api/media/\d+/(?:thumb|preview|file|play)$"
     r"|^/api/cast/file/"
+    r"|^/api/cinema/items/\d+(?:/(?:info|poster|subtitles/\d+\.vtt))?$"
+    r"|^/api/cinema/stream/[0-9a-f]+/(?:index\.m3u8|seg_\d+\.ts)$"
     r"|^/static/"
 )
+VIEWER_POST_RE = re.compile(r"^/api/cinema/stream/[0-9a-f]+/stop$")
 
 
 def _now() -> datetime:
@@ -601,7 +609,16 @@ def viewer_allowed(path: str, method: str) -> bool:
         return True
     if method == "POST" and path == "/api/auth/logout":
         return True
-    if method == "POST" and path in {"/api/cast/play", "/api/cast/stop"}:
+    if method == "POST" and path in {
+        "/api/cast/play",
+        "/api/cast/cinema",
+        "/api/cast/stop",
+        "/api/cinema/stream/start",
+        "/api/cinema/progress",
+        "/api/cinema/progress/clear",
+    }:
+        return True
+    if method == "POST" and VIEWER_POST_RE.match(path):
         return True
     if method != "GET":
         return False

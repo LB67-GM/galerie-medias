@@ -43,6 +43,21 @@ Vidéo / Video
   Il n’est pas inclus dans les sources de Galerie Médias.
   https://ffmpeg.org/legal.html
 
+Lecteur HLS / HLS Player (Cinéma)
+  hls.js 1.5.18 — Apache License 2.0.
+  Texte : static/vendor/hls/LICENSE
+  https://github.com/video-dev/hls.js
+
+DVD / Blu-ray (optionnel, système)
+  libdvdread (GPL-2.0+) et libbluray (LGPL-2.1+) — bibliothèques système séparées,
+  non incluses dans les sources de Galerie Médias. Aucune clé ni code DRM inclus.
+
+Métadonnées Cinéma / Cinema Metadata
+  Wikidata — Creative Commons CC0 1.0 (domaine public).
+  https://www.wikidata.org/
+  Résumés Wikipédia — Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0).
+  https://www.wikipedia.org/
+
 Paquets Python
   Installés par pip, chacun avec sa licence :
   fastapi (MIT), uvicorn (BSD), starlette (BSD), cryptography (Apache 2.0 ou BSD),

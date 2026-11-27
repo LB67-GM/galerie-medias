@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-title" content="Galerie Médias">
-  <link rel="stylesheet" href="/static/styles.css?v=79">
+  <link rel="stylesheet" href="/static/styles.css?v=82">
   <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
 </head>
 <body>
@@ -53,13 +53,13 @@
   <div id="loginGate" class="login-gate hidden">
     <div id="loggedOutCard" class="login-card hidden">
       <h1>Galerie Médias</h1>
-      <p class="muted login-version">Version 3.0</p>
+      <p class="muted login-version">Version 4.0</p>
       <p class="muted" data-i18n="login.signedOut">Vous êtes déconnecté. Les photos ne s’affichent plus.</p>
       <button type="button" id="btnSignInAgain" class="primary" data-i18n="action.signIn">Se connecter</button>
     </div>
     <form id="loginForm" class="login-card">
       <h1>Galerie Médias</h1>
-      <p class="muted login-version">Version 3.0</p>
+      <p class="muted login-version">Version 4.0</p>
       <p class="muted" data-i18n-html="login.lead">La galerie de la maison. Un compte <strong>lecture</strong> voit les photos, la carte et les albums.</p>
       <label data-i18n="login.user">Identifiant
         <input id="loginUser" name="username" autocomplete="username" required>
@@ -74,7 +74,7 @@
     </form>
     <form id="forgotForm" class="login-card hidden">
       <h1>Galerie Médias</h1>
-      <p class="muted login-version">Version 3.0</p>
+      <p class="muted login-version">Version 4.0</p>
       <p class="muted" data-i18n="login.forgotLead">Indiquez le courriel du compte. S’il est connu, un lien valable une heure est envoyé.</p>
       <label data-i18n="login.email">Courriel
         <input id="forgotEmail" type="email" autocomplete="email" required>
@@ -85,7 +85,7 @@
     </form>
     <form id="resetForm" class="login-card hidden">
       <h1>Galerie Médias</h1>
-      <p class="muted login-version">Version 3.0</p>
+      <p class="muted login-version">Version 4.0</p>
       <p class="muted" data-i18n="login.resetLead">Choisissez un nouveau mot de passe (8 caractères minimum).</p>
       <label data-i18n="login.newPass">Nouveau mot de passe
         <input id="resetPass" type="password" autocomplete="new-password" minlength="8" required>
@@ -102,13 +102,14 @@
   <header class="top">
     <div class="brand">
       <strong id="brandName">Galerie Médias</strong>
-      <span id="brandVersion">3.0</span>
+      <span id="brandVersion">4.0</span>
       <span id="status" class="muted">…</span>
       <span id="whoami" class="muted hidden"></span>
       <button type="button" id="btnLogout" class="hidden" data-i18n="action.signOut">Se déconnecter</button>
     </div>
     <nav class="tabs">
       <button type="button" class="tab on" id="tabGallery" data-view="gallery" data-i18n="nav.photos">Photos</button>
+      <button type="button" class="tab" id="tabCinema" data-view="cinema" data-i18n="nav.cinema">Cinéma</button>
       <button type="button" class="tab admin-only" id="tabFaces" data-view="faces" data-i18n="nav.people">Personnes</button>
       <button type="button" class="tab admin-only" id="tabScenes" data-view="scenes" data-i18n="nav.scenes">Scènes</button>
       <button type="button" class="tab admin-only" id="tabCopies" data-view="copies" data-i18n="nav.duplicates">Doublons</button>
@@ -120,10 +121,10 @@
     </nav>
     <button type="button" class="chrome-toggle admin-only" id="btnToolsToggle" data-i18n="nav.tools">Outils</button>
     <div class="tools admin-only" id="toolsPanel">
-      <label class="year-tool">Index
+      <label class="year-tool" data-i18n="tool.indexPhotosLabel">Photos
         <select id="indexYear"></select>
       </label>
-      <button type="button" id="btnIndex" data-i18n="tool.index">Indexer</button>
+      <button type="button" id="btnIndex" data-i18n="tool.index">Indexer Photos</button>
       <button type="button" id="btnFaces" data-i18n="tool.faces" data-i18n-title="tool.facesTitle" title="Détecte les nouveaux visages, ou rattache ceux sans nom aux personnes déjà nommées">Détecter les personnes</button>
       <button type="button" id="btnScenes" data-i18n="tool.scenes" data-i18n-title="tool.scenesTitle" title="Étiquettes plage, montagne, église…">Détecter les scènes</button>
     </div>
@@ -214,6 +215,41 @@
     </div>
   </section>
 
+  <section id="view-cinema" class="view hidden">
+    <div id="cinemaBanner" class="cinema-banner hidden"></div>
+    <div class="filters cinema-filters">
+      <div class="filter-row">
+        <label data-i18n="cinema.type">Type
+          <select id="cinemaType"></select>
+        </label>
+        <label data-i18n="cinema.category">Catégorie
+          <select id="cinemaCategory"></select>
+        </label>
+        <label data-i18n="filter.year">Année
+          <select id="cinemaYear"></select>
+        </label>
+        <input id="cinemaQ" type="search" data-i18n-placeholder="cinema.searchPh" placeholder="Titre, réalisateur ou fichier" aria-label="Recherche Cinéma">
+        <button type="button" id="btnCinemaDisc" class="hidden" data-i18n="cinema.readDisc">Lire le disque</button>
+        <button type="button" id="btnCinemaScan" class="primary admin-only" data-i18n="cinema.scan">Indexer Cinéma</button>
+        <button type="button" id="btnCinemaEnrich" class="admin-only" data-i18n="cinema.enrich" data-i18n-title="cinema.enrichTitle" title="Complète catégories, année, réalisateur et résumé depuis Wikidata (CC0, sans clé API)">Enrichir (Wikidata)</button>
+      </div>
+    </div>
+    <div id="cinemaContinueWrap" class="cinema-continue-wrap hidden">
+      <div class="cinema-continue-head">
+        <h2 class="cinema-section-title" data-i18n="cinema.continue">Continuer la lecture</h2>
+        <button type="button" id="btnCinemaClearContinue" class="cinema-clear-continue" data-i18n="cinema.clearContinue">Tout effacer</button>
+      </div>
+      <div id="cinemaContinue" class="cinema-continue"></div>
+    </div>
+    <p id="cinemaCount" class="count"></p>
+    <div id="cinemaGrid" class="cinema-grid"></div>
+    <div class="pager">
+      <button type="button" id="btnCinemaPrev" data-i18n="action.prev">Précédent</button>
+      <span id="cinemaPageInfo"></span>
+      <button type="button" id="btnCinemaNext" data-i18n="action.next">Suivant</button>
+    </div>
+  </section>
+
   <section id="view-copies" class="view hidden">
     <p class="lede" data-i18n="lede.duplicates">Même photo sous plusieurs fichiers. « Garder » est une suggestion. Vous pouvez mettre à la corbeille toutes les copies en trop, ou seulement celles cochées. Confirmation, puis 30 jours.</p>
     <div class="face-toolbar">
@@ -264,11 +300,15 @@
       <span id="trashPageInfo"></span>
       <button type="button" id="btnTrashNext" data-i18n="action.next">Suivant</button>
     </div>
+    <div id="cinemaTrashWrap" class="cinema-trash-wrap hidden">
+      <h2 class="cinema-section-title" data-i18n="cinema.trashTitle">Corbeille Cinéma</h2>
+      <div id="cinemaTrashGrid" class="cinema-grid"></div>
+    </div>
   </section>
 
   <section id="view-settings" class="view hidden">
     <form id="settingsForm" class="settings-form">
-      <p class="muted" id="appVersion">Galerie Médias 3.0</p>
+      <p class="muted" id="appVersion">Galerie Médias 4.0</p>
       <div id="cfgProgress" class="job-progress hidden">
         <p id="cfgProgressTitle" class="job-progress-title"></p>
         <div class="job-meter hidden" id="cfgProgressMeter"><div id="cfgProgressBar"></div></div>
@@ -387,6 +427,21 @@ Sans position, le fichier reste dans Annee 2024/Juin 2024/.</pre>
           <button type="button" class="primary" id="btnSortMonths" data-i18n="organize.months">Classer année / mois</button>
         </div>
         <p class="muted" data-i18n="set.organizeNote">L’avancement s’affiche comme le téléchargement (bandeau et cadre Paramètres). « Classer la bibliothèque actuelle » ne touche pas au dossier de triage : villes GPS seulement. « Classer année / mois » range vers Annee/Mois (copie, ou déplacement si la source et la destination sont le même dossier). Ensuite, classez la bibliothèque pour les villes.</p>
+      </fieldset>
+      <fieldset id="secCinema">
+        <legend data-i18n="settings.cinema">Cinéma (films, séries, clips)</legend>
+        <p class="muted" data-i18n="settings.cinemaLead">Dossier contenant vos films, séries, clips ou dossiers DVD/Blu-ray. Le lecteur optique physique est facultatif : laissez-le vide sur un serveur sans lecteur.</p>
+        <label data-i18n="settings.cinemaDir">Dossier Cinéma
+          <input id="cfgCinemaDir" type="text" spellcheck="false" placeholder="/mnt/cinema ou D:\Videos\Cinema">
+        </label>
+        <p id="cfgCinemaStatus" class="muted"></p>
+        <label data-i18n="settings.opticalDevice">Lecteur optique physique (optionnel)
+          <input id="cfgOpticalDevice" type="text" spellcheck="false" placeholder="/dev/sr0 ou D:\ (vide si absent)">
+        </label>
+        <div class="sort-actions">
+          <button type="button" id="btnCfgCinemaScan" class="primary" data-i18n="cinema.scan">Indexer Cinéma</button>
+          <button type="button" id="btnCfgCinemaEnrich" data-i18n="cinema.enrich">Enrichir (Wikidata)</button>
+        </div>
       </fieldset>
       <fieldset>
         <legend data-i18n="settings.backup">Sauvegarde</legend>
@@ -661,8 +716,93 @@ Sans position, le fichier reste dans Annee 2024/Juin 2024/.</pre>
     </form>
   </dialog>
 
+  <dialog id="cinemaPlayerDlg" class="cinema-player-dlg">
+    <div class="cinema-player-inner">
+      <div class="cinema-player-top">
+        <div>
+          <h2 id="cinemaPlayerTitle"></h2>
+          <p id="cinemaPlayerMeta" class="muted"></p>
+        </div>
+        <div class="cinema-player-top-actions">
+          <button type="button" id="cinemaEditBtn" class="admin-only" data-i18n="cinema.editMeta">Modifier la fiche</button>
+          <button type="button" id="cinemaTrashBtn" class="danger admin-only" data-i18n="action.delete">Supprimer</button>
+          <button type="button" id="cinemaClose" data-i18n="action.close">Fermer</button>
+        </div>
+      </div>
+      <div class="cinema-video-wrap">
+        <video id="cinemaVideo" controls playsinline></video>
+      </div>
+      <div class="cinema-controls">
+        <label id="cinemaTitleWrap" class="hidden" data-i18n="cinema.discTitle">Titre
+          <select id="cinemaTitle"></select>
+        </label>
+        <label data-i18n="cinema.audio">Audio
+          <select id="cinemaAudio"></select>
+        </label>
+        <label data-i18n="cinema.subtitles">Sous-titres
+          <select id="cinemaSub"></select>
+        </label>
+        <label id="cinemaChapterWrap" class="hidden" data-i18n="cinema.chapters">Chapitres
+          <select id="cinemaChapter"></select>
+        </label>
+        <label data-i18n="cinema.quality">Qualité
+          <select id="cinemaQuality">
+            <option value="auto" data-i18n="cinema.qAuto">Auto</option>
+            <option value="original" data-i18n="cinema.qOriginal">Original</option>
+            <option value="1080p">1080p</option>
+            <option value="720p">720p</option>
+            <option value="480p">480p</option>
+          </select>
+        </label>
+        <button type="button" id="cinemaRestart" data-i18n="cinema.restart">Depuis le début</button>
+        <button type="button" id="cinemaCast" data-i18n="action.cast" data-i18n-title="action.castTitle" title="Envoyer vers une télé LG ou Samsung (DLNA)">Télé</button>
+        <button type="button" id="cinemaFull" data-i18n="lb.full">Plein écran</button>
+      </div>
+      <p id="cinemaPlayerMsg" class="muted"></p>
+      <p id="cinemaPlayerOverview" class="cinema-overview"></p>
+    </div>
+  </dialog>
+
+  <dialog id="cinemaEditDlg">
+    <form id="cinemaEditForm" method="dialog" class="export-form cinema-edit-form">
+      <h2 data-i18n="cinema.editMeta">Modifier la fiche</h2>
+      <label data-i18n="cinema.title">Titre
+        <input id="ceTitle" type="text" maxlength="200" required>
+      </label>
+      <div class="cinema-edit-row">
+        <label data-i18n="cinema.type">Type
+          <select id="ceType"></select>
+        </label>
+        <label data-i18n="filter.year">Année
+          <input id="ceYear" type="number" min="1890" max="2100" placeholder="2010">
+        </label>
+      </div>
+      <label data-i18n="cinema.director">Réalisateur
+        <input id="ceDirector" type="text" maxlength="160">
+      </label>
+      <div class="cinema-edit-cats">
+        <span data-i18n="cinema.categories">Catégories</span>
+        <div id="ceCategories" class="cinema-cat-checks"></div>
+      </div>
+      <label data-i18n="cinema.overview">Résumé
+        <textarea id="ceOverview" rows="3" maxlength="1000"></textarea>
+      </label>
+      <label class="check-line">
+        <input type="checkbox" id="ceLocked" checked>
+        <span data-i18n="cinema.lockMeta">Verrouiller (ne pas écraser lors de l’enrichissement Wikidata)</span>
+      </label>
+      <p id="ceMsg" class="muted"></p>
+      <menu>
+        <button type="submit" value="cancel" data-i18n="action.cancel">Annuler</button>
+        <button type="submit" value="save" class="primary" id="ceSave" data-i18n="action.save">Enregistrer</button>
+      </menu>
+    </form>
+  </dialog>
+
   <script src="/static/vendor/leaflet/leaflet.js"></script>
-  <script src="/static/i18n.js?v=14"></script>
-  <script src="/static/app.js?v=105"></script>
+  <script src="/static/vendor/hls/hls.min.js"></script>
+  <script src="/static/i18n.js?v=18"></script>
+  <script src="/static/app.js?v=108"></script>
+  <script src="/static/cinema.js?v=4"></script>
 </body>
 </html>

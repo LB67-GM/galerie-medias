@@ -79,7 +79,67 @@ def empty_settings() -> dict:
         "smtp_from": "",
         "smtp_tls": "1",
         "public_url": "",
+        "cinema_dir": "",
+        "optical_device": "",
     }
+
+
+def _is_mount_root(parent: Path) -> bool:
+    parts = parent.parts
+    if sys.platform != "win32" and len(parts) >= 2 and parts[0] == "/":
+        if parts[1] in {"mnt", "media", "Volumes"} and len(parts) <= 2:
+            return True
+        if parts[1] == "run" and len(parts) >= 3 and parts[2] == "media" and len(parts) <= 4:
+            return True
+    return False
+
+
+def cinema_dir_status(raw: str | None = None, *, create_local: bool = False) -> dict:
+    """Diagnostique l’accès au dossier Cinéma sans jamais lever d’exception."""
+    if raw is None:
+        raw = str(load_settings().get("cinema_dir") or "")
+    text = str(raw or "").strip()
+    if not text:
+        return {
+            "configured": False,
+            "status": "unconfigured",
+            "path": "",
+            "writable": False,
+        }
+    path = Path(text).expanduser()
+    try:
+        if path.is_dir():
+            readable = os.access(path, os.R_OK)
+            return {
+                "configured": True,
+                "status": "ready" if readable else "unreadable",
+                "path": str(path),
+                "writable": os.access(path, os.W_OK),
+            }
+        if create_local and not _is_mount_root(path.parent):
+            parent = path.parent
+            if parent.is_dir() and os.access(parent, os.W_OK):
+                path.mkdir(parents=True, exist_ok=True)
+                return {
+                    "configured": True,
+                    "status": "ready",
+                    "path": str(path),
+                    "writable": os.access(path, os.W_OK),
+                }
+        status = "missing_mount" if _is_mount_root(path.parent) else "missing"
+        return {
+            "configured": True,
+            "status": status,
+            "path": str(path),
+            "writable": False,
+        }
+    except OSError:
+        return {
+            "configured": True,
+            "status": "unreadable",
+            "path": str(path),
+            "writable": False,
+        }
 
 
 def load_settings() -> dict:
@@ -149,6 +209,8 @@ def save_settings(update: dict, *, keep_password: bool = False) -> dict:
         "smtp_from",
         "smtp_tls",
         "public_url",
+        "cinema_dir",
+        "optical_device",
     ):
         value = update.get(key, current.get(key, ""))
         next_data[key] = str(value or "").strip()
@@ -178,6 +240,8 @@ def save_settings(update: dict, *, keep_password: bool = False) -> dict:
         "smtp_from": next_data["smtp_from"],
         "smtp_tls": next_data["smtp_tls"],
         "public_url": next_data["public_url"],
+        "cinema_dir": next_data["cinema_dir"],
+        "optical_device": next_data["optical_device"],
     }
     if next_data["apple_password"]:
         payload["apple_password_enc"] = encrypt_secret(next_data["apple_password"])
@@ -212,6 +276,9 @@ def public_settings(library: Path | None = None) -> dict:
         "smtp_tls": data["smtp_tls"] if data["smtp_tls"] == "0" else "1",
         "smtp_password_set": bool(data["smtp_password"]),
         "public_url": data["public_url"],
+        "cinema_dir": data["cinema_dir"],
+        "optical_device": data["optical_device"],
+        "cinema_status": cinema_dir_status(data["cinema_dir"]),
         "config_file": str(config_path()),
     }
 

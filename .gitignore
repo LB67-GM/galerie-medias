@@ -26,7 +26,7 @@ cloudflare.ini
 *credentials*
 
 # Médias volumineux et caches de streaming locaux (Cinéma / tests).
-hls/
+/hls/
 *.iso
 *.vob
 *.VOB

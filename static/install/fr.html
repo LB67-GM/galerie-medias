@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Installation</h1>
-    <p>Galerie Médias, version 3.0. Le site reste sur votre ordinateur. Les photos peuvent rester sur un disque USB. La base (SQLite, miniatures, réglages) reste toujours sur l’ordinateur, jamais sur le USB. Le site n’écoute qu’en HTTPS.</p>
+    <p>Galerie Médias, version 4.0. Le site reste sur votre ordinateur. Les photos peuvent rester sur un disque USB. La base (SQLite, miniatures, réglages) reste toujours sur l’ordinateur, jamais sur le USB. Le site n’écoute qu’en HTTPS.</p>
     <p>La même notice existe en <a href="en.html" hreflang="en">anglais</a>, en <a href="es.html" hreflang="es">espagnol</a> et en <a href="de.html" hreflang="de">allemand</a>. Le mode d’emploi des menus est dans l’aide <strong>?</strong>.</p>
 
     <h2>Où sont les fichiers</h2>
@@ -82,12 +82,13 @@
       <li>Branchez le disque et attendez qu’il apparaisse.</li>
       <li>Onglet <strong>Paramètres</strong>. Indiquez le dossier des photos, puis <strong>Enregistrer</strong>.</li>
       <li>Classez avant d’indexer. Photos en vrac ou déjà par année : <code>classer-lieux.bat</code> (Windows) ou <code>classer-lieux-mac.command</code>. Arbre disparate, par exemple DCIM : d’abord <code>classer-annee-mois</code>, puis <code>classer-lieux</code>. Le choix 1 simule, le choix 2 écrit. Sous Linux : <code>.venv/bin/python tools/sort_annee_mois.py SOURCE DEST</code>, puis <code>.venv/bin/python tools/sort_lieux.py -d DEST</code>. Ajoutez <code>--apply</code> pour écrire.</li>
-      <li>Dans le site : <strong>Indexer</strong>. Attendez la fin.</li>
+      <li>Dans le site : <strong>Indexer Photos</strong>. Attendez la fin.</li>
+      <li><em>(Optionnel)</em> Pour films, séries et clips : indiquez le dossier dans <strong>Paramètres → Cinéma</strong>, enregistrez, puis cliquez <strong>Indexer Cinéma</strong>.</li>
     </ol>
     <p>Les dossiers créés s’appellent <code>Annee 2024</code> et <code>Juin 2024</code>. Ces noms restent en français sur le disque.</p>
 
-    <h2>Mise à jour</h2>
-    <p>Fermez la fenêtre du site. Décompressez le nouveau zip par-dessus le même dossier. Ne supprimez pas GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> (Linux). Ne recopiez pas les photos. Puis <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, ou relancez <code>start-linux.sh</code>. Rechargez la page. Le détail est dans <code>MISE-A-JOUR-fr.md</code>. Les prérequis sont dans <code>REQUIS-fr.md</code>.</p>
+    <h2>Mise à jour (depuis 3.0 vers 4.0)</h2>
+    <p>Fermez la fenêtre du site (ou arrêtez le service systemd sous Linux). Décompressez le nouveau zip par-dessus le même dossier. Ne supprimez pas GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). Ne recopiez pas les photos et ne réindexez pas la bibliothèque Photos : la base SQLite et les réglages migrent automatiquement vers la 4.0. Puis lancez <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, ou relancez <code>start-linux.sh</code> / le service, et rechargez avec <strong>Ctrl+F5</strong>. Pour activer <strong>Cinéma</strong>, indiquez le dossier vidéo dans <strong>Paramètres → Cinéma</strong> puis cliquez <strong>Indexer Cinéma</strong>. Le détail complet est dans <code>MISE-A-JOUR-fr.md</code>.</p>
 
     <h2>Si la page ne s’ouvre pas</h2>
     <ul>

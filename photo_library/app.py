@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import atexit
+from contextlib import asynccontextmanager
 import shutil
 import threading
 import time
@@ -120,7 +122,39 @@ from photo_library.scenes import (
     scenes_workspace,
     untagged_media,
 )
-from photo_library.user_config import load_settings, public_settings, save_settings
+from photo_library.user_config import (
+    cinema_dir_status,
+    load_settings,
+    public_settings,
+    save_settings,
+)
+from photo_library.cinema_meta import CATEGORIES, MEDIA_TYPES
+from photo_library.cinema_optical import (
+    inspect_configured_disc,
+    inspect_optical_source,
+    resolve_optical_title,
+)
+from photo_library.cinema_probe import extract_subtitle_vtt, probe_media
+from photo_library.cinema_scan import (
+    CINEMA_KEEP_DAYS,
+    cinema_filters,
+    cinema_poster_path,
+    cinema_trash_count,
+    clear_cinema_progress,
+    continue_watching,
+    enrich_cinema_library,
+    get_cinema_item,
+    list_cinema_items,
+    list_cinema_trash,
+    purge_cinema_item,
+    restore_cinema_item,
+    save_cinema_progress,
+    scan_cinema_library,
+    trash_cinema_item,
+    update_cinema_metadata,
+)
+from photo_library.ffmpeg_util import ffmpeg_capabilities
+from photo_library.hls_stream import HlsSessionManager
 from photo_library.sort_job import run_classer
 from photo_library.thumbs import make_preview, preview_file, thumb_file, face_thumb_file
 
@@ -276,6 +310,52 @@ class SettingsBody(BaseModel):
     smtp_from: str = ""
     smtp_tls: str = "1"
     public_url: str = ""
+    cinema_dir: str = ""
+    optical_device: str = ""
+
+
+class CinemaMetadataBody(BaseModel):
+    title: str | None = None
+    media_type: str | None = None
+    year: int | None = None
+    clear_year: bool = False
+    director: str | None = None
+    overview: str | None = None
+    categories: list[str] | None = None
+    metadata_locked: bool = True
+
+
+class CinemaEnrichBody(BaseModel):
+    lang: str = "fr"
+    only_missing: bool = True
+    limit: int | None = Field(default=None, ge=1, le=5000)
+
+
+class CinemaStreamStartBody(BaseModel):
+    item_id: int | None = None
+    disc: bool = False
+    title_index: int | None = Field(default=None, ge=0, le=99999)
+    start_s: float = Field(default=0.0, ge=0.0)
+    audio_idx: int | None = Field(default=None, ge=0, le=64)
+    quality: str = "auto"
+
+
+class CastCinemaBody(BaseModel):
+    control_url: str
+    item_id: int
+
+
+class CinemaProgressBody(BaseModel):
+    item_id: int
+    position_s: float = Field(default=0.0, ge=0.0)
+    duration_s: float = Field(default=0.0, ge=0.0)
+    title_index: int = Field(default=0, ge=0)
+    audio_idx: int | None = None
+    subtitle_idx: int | None = None
+
+
+class CinemaClearProgressBody(BaseModel):
+    item_id: int | None = None
 
 
 class SortBody(BaseModel):
@@ -653,10 +733,21 @@ def create_app(
 
             return jobs.start("trash-expire", run)
 
-    app = FastAPI(title="Photo library", docs_url=None, redoc_url=None)
+    hls = HlsSessionManager(cache)
+    atexit.register(hls.stop_all)
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        try:
+            yield
+        finally:
+            hls.stop_all()
+
+    app = FastAPI(title="Photo library", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.library = library
     app.state.cache = cache
     app.state.jobs = jobs
+    app.state.hls = hls
     app.state.https = https
     app.state.gallery_port = gallery_port
     app.state.cast_http_port = cast_http_port
@@ -863,6 +954,41 @@ def create_app(
             return {"ok": True, "note": "TV oubliée (éteinte ou occupée)."}
         return {"ok": True}
 
+    @app.post("/api/cast/cinema")
+    def cast_cinema(body: CastCinemaBody):
+        if not is_private_http_url(body.control_url):
+            raise HTTPException(400, "adresse TV refusée")
+        conn = connect(cache)
+        try:
+            item, fpath = _cinema_item_path(conn, body.item_id)
+        finally:
+            conn.close()
+        if item["source_type"] != "file":
+            raise HTTPException(
+                422,
+                "Envoi DLNA direct réservé aux fichiers vidéo (utilisez le navigateur pour DVD/Blu-ray).",
+            )
+        dest = (
+            cache
+            / "cinema_cast"
+            / f"{body.item_id}-{int(item.get('size') or 0)}-{int(item.get('mtime_ns') or 0)}.mp4"
+        )
+        try:
+            ensure_play_mp4(fpath, dest)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+        token = make_token(secret, body.item_id, "cinema")
+        uri = f"{_cast_base()}/api/cast/file/{token}"
+        title = str(item.get("title") or fpath.name)
+        try:
+            set_and_play(body.control_url, uri, title, "video/mp4", video=True)
+        except Exception as exc:
+            raise HTTPException(
+                502,
+                "La télévision n’affiche pas la vidéo (port 8766).",
+            ) from exc
+        return {"ok": True, "name": title}
+
     @app.get("/api/status")
     def status(request: Request):
         conn = connect(cache)
@@ -881,7 +1007,7 @@ def create_app(
             }
             if _is_admin(enabled, me):
                 _kick_trash_expire()
-                trash_n = trash_count(conn)
+                trash_n = trash_count(conn) + cinema_trash_count(conn)
                 tagged = conn.execute(
                     "SELECT COUNT(DISTINCT media_id) FROM media_scenes"
                 ).fetchone()[0]
@@ -1066,6 +1192,8 @@ def create_app(
             Path(saved["google_dir"]).expanduser().mkdir(parents=True, exist_ok=True)
         if saved.get("facebook_dir"):
             Path(saved["facebook_dir"]).expanduser().mkdir(parents=True, exist_ok=True)
+        if saved.get("cinema_dir"):
+            cinema_dir_status(saved["cinema_dir"], create_local=True)
         after = public_settings(library)
         lib_changed = (
             before["library_src"] != after["library_src"]
@@ -2244,6 +2372,412 @@ def create_app(
             return purge_selected(conn, library, cache, ids, progress=progress)
 
         return _run_trash_action("trash-purge", body, worker)
+
+    def _cinema_user_key(request: Request) -> str:
+        user = getattr(request.state, "user", None)
+        if isinstance(user, dict) and user.get("id") is not None:
+            return f"user:{int(user['id'])}"
+        return "default"
+
+    def _cinema_item_path(conn, item_id: int) -> tuple[dict, Path]:
+        item = get_cinema_item(conn, item_id)
+        if item is None:
+            raise HTTPException(404, "vidéo introuvable")
+        cfg = load_settings()
+        root_raw = str(cfg.get("cinema_dir") or "").strip()
+        if not root_raw:
+            raise HTTPException(400, "dossier Cinéma non configuré")
+        root = Path(root_raw).expanduser().resolve()
+        fpath = (root / item["relpath"]).resolve()
+        try:
+            fpath.relative_to(root)
+        except ValueError as exc:
+            raise HTTPException(403, "chemin hors dossier Cinéma") from exc
+        if not fpath.exists():
+            raise HTTPException(404, "fichier vidéo absent du disque ou NAS")
+        return item, fpath
+
+    @app.get("/api/cinema/status")
+    def cinema_status():
+        cfg = load_settings()
+        dstatus = cinema_dir_status(cfg.get("cinema_dir"))
+        conn = connect(cache)
+        try:
+            flt = cinema_filters(conn)
+        finally:
+            conn.close()
+        return {
+            "cinema_dir": cfg.get("cinema_dir") or "",
+            "optical_device": cfg.get("optical_device") or "",
+            "dir_status": dstatus,
+            "ffmpeg": ffmpeg_capabilities(),
+            "total": flt["total"],
+            "all_types": list(MEDIA_TYPES),
+            "all_categories": list(CATEGORIES),
+        }
+
+    @app.get("/api/cinema/filters")
+    def get_cinema_filters():
+        conn = connect(cache)
+        try:
+            data = cinema_filters(conn)
+        finally:
+            conn.close()
+        data["all_types"] = list(MEDIA_TYPES)
+        data["all_categories"] = list(CATEGORIES)
+        return data
+
+    @app.get("/api/cinema/items")
+    def get_cinema_items(
+        request: Request,
+        media_type: str | None = None,
+        category: str | None = None,
+        year: int | None = None,
+        q: str | None = None,
+        offset: int = Query(0, ge=0),
+        limit: int = Query(80, ge=1, le=200),
+    ):
+        conn = connect(cache)
+        try:
+            return list_cinema_items(
+                conn,
+                media_type=media_type or None,
+                category=category or None,
+                year=year,
+                q=q,
+                offset=offset,
+                limit=limit,
+                user_key=_cinema_user_key(request),
+            )
+        finally:
+            conn.close()
+
+    @app.get("/api/cinema/continue")
+    def get_cinema_continue(request: Request, limit: int = Query(12, ge=1, le=40)):
+        conn = connect(cache)
+        try:
+            return {"items": continue_watching(conn, _cinema_user_key(request), limit=limit)}
+        finally:
+            conn.close()
+
+    @app.get("/api/cinema/items/{item_id}")
+    def get_cinema_item_detail(item_id: int, request: Request):
+        conn = connect(cache)
+        try:
+            item = get_cinema_item(conn, item_id, user_key=_cinema_user_key(request))
+        finally:
+            conn.close()
+        if item is None:
+            raise HTTPException(404, "vidéo introuvable")
+        return item
+
+    @app.get("/api/cinema/items/{item_id}/info")
+    def get_cinema_item_info(item_id: int, request: Request):
+        conn = connect(cache)
+        try:
+            item, fpath = _cinema_item_path(conn, item_id)
+            item = get_cinema_item(conn, item_id, user_key=_cinema_user_key(request)) or item
+        finally:
+            conn.close()
+        if item["source_type"] in {"dvd", "bluray"}:
+            opt = inspect_optical_source(fpath, hint_kind=item["source_type"])
+            titles = opt["titles"]
+            chosen = titles[0] if titles else None
+            for t in titles:
+                if t.index == opt["default_title"]:
+                    chosen = t
+                    break
+            probe_dict = (
+                chosen.probe.to_dict()
+                if (chosen is not None and chosen.probe is not None)
+                else {
+                    "readable": False,
+                    "duration_s": None,
+                    "width": None,
+                    "height": None,
+                    "video_codec": "",
+                    "pix_fmt": "",
+                    "audio_tracks": [],
+                    "subtitle_tracks": [],
+                    "chapters": [],
+                    "tags": {},
+                }
+            )
+            return {
+                "item": item,
+                "probe": probe_dict,
+                "titles": [t.to_dict() for t in titles],
+                "default_title": opt["default_title"],
+                "encrypted": opt["encrypted"],
+                "encryption_hint": opt["encryption_hint"],
+            }
+        probe = probe_media(fpath).to_dict()
+        return {"item": item, "probe": probe, "titles": []}
+
+    @app.get("/api/cinema/disc")
+    def get_cinema_disc():
+        cfg = load_settings()
+        return inspect_configured_disc(str(cfg.get("optical_device") or ""))
+
+    @app.get("/api/cinema/items/{item_id}/poster")
+    def get_cinema_poster(item_id: int):
+        poster = cinema_poster_path(cache, item_id)
+        if poster.is_file() and poster.stat().st_size > 128:
+            return FileResponse(
+                poster,
+                media_type="image/jpeg",
+                headers={"Cache-Control": "public, max-age=86400"},
+            )
+        svg = PLACEHOLDER_SVG.format(label="Cinéma")
+        return Response(content=svg, media_type="image/svg+xml")
+
+    @app.get("/api/cinema/items/{item_id}/subtitles/{sub_idx}.vtt")
+    def get_cinema_subtitle(item_id: int, sub_idx: int):
+        conn = connect(cache)
+        try:
+            item, fpath = _cinema_item_path(conn, item_id)
+        finally:
+            conn.close()
+        dest = (
+            cache
+            / "cinema_subs"
+            / f"{item_id}-{int(item.get('mtime_ns') or 0)}-{int(sub_idx)}.vtt"
+        )
+        try:
+            out = extract_subtitle_vtt(fpath, sub_idx, dest)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+        return FileResponse(out, media_type="text/vtt; charset=utf-8")
+
+    @app.post("/api/cinema/items/{item_id}/metadata")
+    def post_cinema_metadata(item_id: int, body: CinemaMetadataBody):
+        conn = connect(cache)
+        try:
+            updated = update_cinema_metadata(
+                conn,
+                item_id,
+                title=body.title,
+                media_type=body.media_type,
+                year=body.year,
+                clear_year=body.clear_year,
+                director=body.director,
+                overview=body.overview,
+                categories=body.categories,
+                metadata_locked=body.metadata_locked,
+            )
+        finally:
+            conn.close()
+        if updated is None:
+            raise HTTPException(404, "vidéo introuvable")
+        return updated
+
+    @app.post("/api/cinema/scan")
+    def post_cinema_scan():
+        cfg = load_settings()
+        status = cinema_dir_status(cfg.get("cinema_dir"), create_local=True)
+        if status["status"] != "ready":
+            raise HTTPException(
+                400,
+                f"Dossier Cinéma indisponible ({status['status']}) : {status['path'] or 'non configuré'}",
+            )
+        cinema_root = Path(status["path"])
+
+        def run(progress):
+            conn = connect(cache)
+            try:
+                return scan_cinema_library(conn, cinema_root, cache, progress=progress)
+            finally:
+                conn.close()
+
+        return jobs.start("cinema-scan", run)
+
+    @app.post("/api/cinema/enrich")
+    def post_cinema_enrich(body: CinemaEnrichBody):
+        def run(progress):
+            conn = connect(cache)
+            try:
+                return enrich_cinema_library(
+                    conn,
+                    lang=body.lang,
+                    only_missing=body.only_missing,
+                    limit=body.limit,
+                    progress=progress,
+                )
+            finally:
+                conn.close()
+
+        return jobs.start("cinema-enrich", run)
+
+    @app.post("/api/cinema/stream/start")
+    def post_cinema_stream_start(body: CinemaStreamStartBody):
+        quality = (
+            body.quality
+            if body.quality in {"auto", "original", "1080p", "720p", "480p"}
+            else "auto"
+        )
+        if body.disc:
+            cfg = load_settings()
+            dev_raw = str(cfg.get("optical_device") or "").strip()
+            if not dev_raw:
+                raise HTTPException(400, "aucun lecteur optique configuré dans Paramètres")
+            dev_path = Path(dev_raw).expanduser()
+            try:
+                title, _opt = resolve_optical_title(dev_path, title_index=body.title_index)
+                return hls.start_session(
+                    dev_path,
+                    item_key=f"disc:{title.index}",
+                    start_s=body.start_s,
+                    audio_idx=body.audio_idx,
+                    quality=quality,
+                    input_args=title.input_args,
+                    probe=title.probe,
+                    force_transcode=True,
+                )
+            except ValueError as exc:
+                raise HTTPException(422, str(exc)) from exc
+
+        if body.item_id is None:
+            raise HTTPException(400, "item_id ou disc requis")
+        conn = connect(cache)
+        try:
+            item, fpath = _cinema_item_path(conn, body.item_id)
+        finally:
+            conn.close()
+        if item["source_type"] in {"dvd", "bluray"}:
+            try:
+                title, _opt = resolve_optical_title(
+                    fpath,
+                    hint_kind=item["source_type"],
+                    title_index=body.title_index,
+                )
+                return hls.start_session(
+                    fpath,
+                    item_key=f"item:{body.item_id}",
+                    start_s=body.start_s,
+                    audio_idx=body.audio_idx,
+                    quality=quality,
+                    input_args=title.input_args,
+                    probe=title.probe,
+                    force_transcode=True,
+                )
+            except ValueError as exc:
+                raise HTTPException(422, str(exc)) from exc
+        try:
+            return hls.start_session(
+                fpath,
+                item_key=f"item:{body.item_id}",
+                start_s=body.start_s,
+                audio_idx=body.audio_idx,
+                quality=quality,
+            )
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.get("/api/cinema/stream/{sid}/{filename}")
+    def get_cinema_stream_file(sid: str, filename: str):
+        path = hls.resolve_file(sid, filename)
+        if path is None:
+            raise HTTPException(404, "segment ou session HLS introuvable")
+        if filename.endswith(".m3u8"):
+            return Response(
+                content=path.read_bytes(),
+                media_type="application/vnd.apple.mpegurl",
+                headers={"Cache-Control": "no-store, no-cache"},
+            )
+        return FileResponse(
+            path,
+            media_type="video/mp2t",
+            headers={"Cache-Control": "public, max-age=60"},
+        )
+
+    @app.post("/api/cinema/stream/{sid}/stop")
+    def post_cinema_stream_stop(sid: str):
+        return {"stopped": hls.stop_session(sid)}
+
+    @app.post("/api/cinema/progress")
+    def post_cinema_progress(body: CinemaProgressBody, request: Request):
+        conn = connect(cache)
+        try:
+            return save_cinema_progress(
+                conn,
+                user_key=_cinema_user_key(request),
+                item_key=f"item:{body.item_id}",
+                position_s=body.position_s,
+                duration_s=body.duration_s,
+                title_index=body.title_index,
+                audio_idx=body.audio_idx,
+                subtitle_idx=body.subtitle_idx,
+            )
+        finally:
+            conn.close()
+
+    @app.post("/api/cinema/progress/clear")
+    def post_cinema_progress_clear(body: CinemaClearProgressBody, request: Request):
+        conn = connect(cache)
+        try:
+            cleared = clear_cinema_progress(
+                conn,
+                user_key=_cinema_user_key(request),
+                item_id=body.item_id,
+            )
+            return {"cleared": cleared}
+        finally:
+            conn.close()
+
+    def _cinema_root_or_400() -> Path:
+        cfg = load_settings()
+        raw = str(cfg.get("cinema_dir") or "").strip()
+        if not raw:
+            raise HTTPException(400, "dossier Cinéma non configuré")
+        return Path(raw).expanduser().resolve()
+
+    @app.post("/api/cinema/items/{item_id}/trash")
+    def post_cinema_trash_item(item_id: int):
+        root = _cinema_root_or_400()
+        conn = connect(cache)
+        try:
+            return trash_cinema_item(conn, root, item_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        except OSError as exc:
+            raise HTTPException(500, str(exc)) from exc
+        finally:
+            conn.close()
+
+    @app.get("/api/cinema/trash")
+    def get_cinema_trash():
+        conn = connect(cache)
+        try:
+            items = list_cinema_trash(conn)
+            return {"items": items, "count": len(items), "keep_days": CINEMA_KEEP_DAYS}
+        finally:
+            conn.close()
+
+    @app.post("/api/cinema/trash/{item_id}/restore")
+    def post_cinema_trash_restore(item_id: int):
+        root = _cinema_root_or_400()
+        conn = connect(cache)
+        try:
+            return restore_cinema_item(conn, root, item_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        except OSError as exc:
+            raise HTTPException(500, str(exc)) from exc
+        finally:
+            conn.close()
+
+    @app.post("/api/cinema/trash/{item_id}/purge")
+    def post_cinema_trash_purge(item_id: int):
+        root = _cinema_root_or_400()
+        conn = connect(cache)
+        try:
+            return purge_cinema_item(conn, root, cache, item_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        except OSError as exc:
+            raise HTTPException(500, str(exc)) from exc
+        finally:
+            conn.close()
 
     if STATIC.is_dir():
         app.mount("/static", StaticFiles(directory=STATIC), name="static")

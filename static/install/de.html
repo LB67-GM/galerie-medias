@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Installation</h1>
-    <p>Galerie Médias, Version 3.0. Die Seite bleibt auf Ihrem Computer. Die Fotos dürfen auf einem USB-Datenträger bleiben. Die Datenbank (SQLite, Miniaturen, Einstellungen) bleibt immer auf dem Computer, nie auf dem USB-Datenträger. Die Seite hört nur auf HTTPS.</p>
+    <p>Galerie Médias, Version 4.0. Die Seite bleibt auf Ihrem Computer. Die Fotos dürfen auf einem USB-Datenträger bleiben. Die Datenbank (SQLite, Miniaturen, Einstellungen) bleibt immer auf dem Computer, nie auf dem USB-Datenträger. Die Seite hört nur auf HTTPS.</p>
     <p>Dieselbe Anleitung gibt es auf <a href="fr.html" hreflang="fr">Französisch</a>, <a href="en.html" hreflang="en">Englisch</a> und <a href="es.html" hreflang="es">Spanisch</a>. Die Bedienung der Menüs steht in der Hilfe <strong>?</strong>.</p>
 
     <h2>Wo die Dateien liegen</h2>
@@ -82,12 +82,13 @@
       <li>Schließen Sie den Datenträger an und warten Sie, bis er erscheint.</li>
       <li>Register <strong>Einstellungen</strong>. Geben Sie den Fotoordner an, dann <strong>Speichern</strong>.</li>
       <li>Sortieren Sie vor dem Indexieren. Lose Fotos oder Fotos schon nach Jahr: <code>classer-lieux.bat</code> (Windows) oder <code>classer-lieux-mac.command</code>. Ein gemischter Baum, zum Beispiel DCIM: zuerst <code>classer-annee-mois</code>, dann <code>classer-lieux</code>. Wahl 1 simuliert, Wahl 2 schreibt. Unter Linux: <code>.venv/bin/python tools/sort_annee_mois.py QUELLE ZIEL</code>, dann <code>.venv/bin/python tools/sort_lieux.py -d ZIEL</code>. <code>--apply</code> schreibt.</li>
-      <li>Auf der Seite: <strong>Indexieren</strong>. Warten Sie das Ende ab.</li>
+      <li>Auf der Seite: <strong>Fotos indizieren</strong>. Warten Sie das Ende ab.</li>
+      <li><em>(Optional)</em> Für Filme, Serien und Clips: Ordner unter <strong>Einstellungen → Kino</strong> eintragen, speichern und <strong>Kino indizieren</strong> klicken.</li>
     </ol>
     <p>Die angelegten Ordner heißen <code>Annee 2024</code> und <code>Juin 2024</code>. Diese Namen bleiben auf der Festplatte französisch.</p>
 
-    <h2>Aktualisierung</h2>
-    <p>Schließen Sie das Fenster der Seite. Entpacken Sie das neue Zip über denselben Ordner. Löschen Sie nicht GaleriePhotos (Windows, macOS) und nicht <code>~/.config/galerie-photos</code> (Linux). Kopieren Sie die Fotos nicht erneut. Danach <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, oder starten Sie <code>start-linux.sh</code> erneut. Laden Sie die Seite neu. Die Einzelheiten stehen in <code>MISE-A-JOUR-de.md</code>. Die Voraussetzungen stehen in <code>REQUIS-de.md</code>.</p>
+    <h2>Aktualisierung (von 3.0 auf 4.0)</h2>
+    <p>Schließen Sie das Fenster der Seite (oder stoppen Sie den systemd-Dienst unter Linux). Entpacken Sie das neue Zip über denselben Ordner. Löschen Sie nicht GaleriePhotos (Windows, macOS) und nicht <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). Kopieren oder indizieren Sie die Fotos nicht erneut: SQLite und Einstellungen migrieren automatisch auf 4.0. Danach <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code> oder <code>start-linux.sh</code> / den Dienst neu starten und mit <strong>Strg+F5</strong> neu laden. Für <strong>Kino</strong> tragen Sie den Video-Ordner unter <strong>Einstellungen → Kino</strong> ein und klicken auf <strong>Kino indizieren</strong>. Einzelheiten stehen in <code>MISE-A-JOUR-de.md</code>.</p>
 
     <h2>Wenn die Seite nicht aufgeht</h2>
     <ul>
