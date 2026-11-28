@@ -37,7 +37,7 @@ CATEGORIES = (
     "clip",
 )
 
-_USER_AGENT = "GalerieMedias/4.0 (Open Source MIT; Wikidata metadata lookup)"
+_USER_AGENT = "GalerieMedias/4.1 (Open Source MIT; Wikidata metadata lookup)"
 
 _SERIES_RE = re.compile(r"(?i)\bS(\d{1,2})[\s._-]*E(\d{1,3})\b|\b(\d{1,2})x(\d{2})\b")
 _LEADING_YEAR_RE = re.compile(r"^\s*((?:19|20)\d{2})\s*[-–._]+\s*(.+)$")

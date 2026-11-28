@@ -4018,7 +4018,7 @@ async function refreshCastDevices() {
 async function sendToTv() {
   if (!state.castDevice) return;
   if (state.castCinemaItem) {
-    setCastMsg(trf("ui.castPrep", { name: state.castDevice.name }));
+    setCastMsg(trf("ui.castPrepFilm", { name: state.castDevice.name }));
     try {
       const data = await api("/api/cast/cinema", {
         method: "POST",

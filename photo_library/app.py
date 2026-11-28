@@ -974,7 +974,7 @@ def create_app(
             / f"{body.item_id}-{int(item.get('size') or 0)}-{int(item.get('mtime_ns') or 0)}.mp4"
         )
         try:
-            ensure_play_mp4(fpath, dest)
+            ensure_play_mp4(fpath, dest, preset="ultrafast")
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         token = make_token(secret, body.item_id, "cinema")

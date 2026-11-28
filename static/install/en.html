@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Installation</h1>
-    <p>Galerie Médias, version 4.0. The site stays on your computer. Photos may stay on a USB disk. The database (SQLite, thumbnails, settings) always stays on the computer, never on the USB disk. The site listens only on HTTPS.</p>
+    <p>Galerie Médias, version 4.1. The site stays on your computer. Photos may stay on a USB disk. The database (SQLite, thumbnails, settings) always stays on the computer, never on the USB disk. The site listens only on HTTPS.</p>
     <p>The same guide exists in <a href="fr.html" hreflang="fr">French</a>, <a href="es.html" hreflang="es">Spanish</a>, and <a href="de.html" hreflang="de">German</a>. How the menus work is in the <strong>?</strong> help.</p>
 
     <h2>Where the files are</h2>
@@ -86,6 +86,9 @@
       <li><em>(Optional)</em> For movies, series, and clips: set the folder in <strong>Settings → Cinema</strong>, save, then click <strong>Index Cinema</strong>.</li>
     </ol>
     <p>The folders created are named <code>Annee 2024</code> and <code>Juin 2024</code>. Those names stay in French on disk.</p>
+
+    <h2>Update (from 4.0 to 4.1)</h2>
+    <p>Same steps: close the site, unpack the zip over the same folder, leave the database and the photos alone, then reload with <strong>Ctrl+F5</strong>. Settings shows <strong>Galerie Médias 4.1</strong>. Nothing to re-index. The <strong>TV</strong> button for a film says the first conversion can take 4 to 5 minutes; the same film then starts right away.</p>
 
     <h2>Update (from 3.0 to 4.0)</h2>
     <p>Close the site window (or stop the systemd service on Linux). Unpack the new zip over the same folder. Do not delete GaleriePhotos (Windows, macOS) or <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). Do not copy or re-index the Photos library: SQLite and settings migrate automatically to 4.0. Then run <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, or restart <code>start-linux.sh</code> / the service, and reload with <strong>Ctrl+F5</strong>. To enable <strong>Cinema</strong>, set your video folder in <strong>Settings → Cinema</strong> and click <strong>Index Cinema</strong>. Full details are in <code>MISE-A-JOUR-en.md</code>.</p>

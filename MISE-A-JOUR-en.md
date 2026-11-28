@@ -1,10 +1,17 @@
-# Galerie Médias 4.0 — update a site that is already installed
+# Galerie Médias 4.1 — update a site that is already installed
 
 Use this file when the site is already running. First install: [INSTALL-en.md](INSTALL-en.md).
 
 Other languages: [Français](MISE-A-JOUR-fr.md), [Español](MISE-A-JOUR-es.md), [Deutsch](MISE-A-JOUR-de.md).
 
-After the update, **Settings** shows **Galerie Médias 4.0** (also at the top left).
+After the update, **Settings** shows **Galerie Médias 4.1** (also at the top left).
+
+## What is new in 4.1
+
+- **TV** button for a film (Cinema): the message says the first conversion can take **4 to 5 minutes**. The prepared file is kept, so the same film then starts right away.
+- This television conversion is faster than in 4.0 (faster H.264 720p encode). A short video from the Photos gallery still uses the about-one-minute message.
+- Playing a film in the browser (HLS) still starts within seconds.
+- Nothing to re-index. Photos, accounts and settings stay where they are.
 
 ## What is new in 4.0
 
@@ -43,7 +50,7 @@ After the update, **Settings** shows **Galerie Médias 4.0** (also at the top le
 5. Double-click `reparer-installation.bat` and wait until the window finishes.
 6. Double-click `ouvrir-galerie.bat`.
 7. In the browser: **Ctrl+F5**.
-8. Settings: **Galerie Médias 4.0**.
+8. Settings: **Galerie Médias 4.1**.
 
 There is no need to index everything again. The television also uses port **8766**: run `autoriser-parefeu.bat` once if the TV cannot see the site.
 
@@ -54,7 +61,7 @@ There is no need to index everything again. The television also uses port **8766
 3. Do not touch `Library/Application Support/GaleriePhotos`.
 4. Double-click `reparer-installation-mac.command`, or start `start-mac.command` again.
 5. Reload the page (Cmd+Shift+R).
-6. Settings: **Galerie Médias 4.0**.
+6. Settings: **Galerie Médias 4.1**.
 
 ## Linux
 
@@ -62,7 +69,7 @@ There is no need to index everything again. The television also uses port **8766
 2. Replace the program files in the same folder. Do not delete `~/.config/galerie-photos/` or `~/.cache/photo-library/`.
 3. Run `bash start-linux.sh` again (or `systemctl --user start photo-library.service`). If `REQUIS-en.md` changed, `start-linux.sh` updates the packages.
 4. Reload the page (**Ctrl+F5**).
-5. Settings: **Galerie Médias 4.0**. *(Optional: mount your video folder, e.g. `/mnt/cinema`, then configure it in **Settings → Cinema**.)*
+5. Settings: **Galerie Médias 4.1**. *(Optional: mount your video folder, e.g. `/mnt/cinema`, then configure it in **Settings → Cinema**.)*
 
 ## Do not
 

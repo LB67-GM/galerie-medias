@@ -1,10 +1,17 @@
-# Galerie Médias 4.0 — mettre à jour un site déjà installé
+# Galerie Médias 4.1 — mettre à jour un site déjà installé
 
 Ce fichier sert si le site tourne déjà. Première installation : [INSTALL-fr.md](INSTALL-fr.md).
 
 Autres langues : [English](MISE-A-JOUR-en.md), [Español](MISE-A-JOUR-es.md), [Deutsch](MISE-A-JOUR-de.md).
 
-Après la mise à jour, l’onglet **Paramètres** affiche **Galerie Médias 4.0** (aussi en haut à gauche).
+Après la mise à jour, l’onglet **Paramètres** affiche **Galerie Médias 4.1** (aussi en haut à gauche).
+
+## Quoi de neuf en 4.1
+
+- Bouton **Télé** d’un film (Cinéma) : le message indique que la première conversion peut prendre **4 à 5 minutes**. Le fichier préparé est conservé : le même film part ensuite tout de suite.
+- Cette conversion vers la télé est plus rapide qu’en 4.0 (encodage H.264 720p accéléré). Une courte vidéo de la galerie Photos garde le message d’environ une minute.
+- La lecture d’un film dans le navigateur (HLS) démarre toujours en quelques secondes.
+- Rien à réindexer. Photos, comptes et réglages ne bougent pas.
 
 ## Quoi de neuf en 4.0
 
@@ -43,7 +50,7 @@ Les **photos** et la **base** (visages, albums, comptes) ne bougent pas. On remp
 5. Double-cliquez `reparer-installation.bat` et laissez la fenêtre aller jusqu’à la fin.
 6. Double-cliquez `ouvrir-galerie.bat`.
 7. Dans le navigateur : **Ctrl+F5**.
-8. Paramètres : **Galerie Médias 4.0**.
+8. Paramètres : **Galerie Médias 4.1**.
 
 Inutile de tout réindexer. La télévision utilise aussi le port **8766** : `autoriser-parefeu.bat` une fois, si elle ne voit pas le site.
 
@@ -54,7 +61,7 @@ Inutile de tout réindexer. La télévision utilise aussi le port **8766** : `au
 3. Ne touchez pas à `Bibliothèque/Application Support/GaleriePhotos`.
 4. Double-clic `reparer-installation-mac.command`, ou relancez `start-mac.command`.
 5. Rechargez la page (Cmd+Shift+R).
-6. Paramètres : **Galerie Médias 4.0**.
+6. Paramètres : **Galerie Médias 4.1**.
 
 ## Linux
 
@@ -62,7 +69,7 @@ Inutile de tout réindexer. La télévision utilise aussi le port **8766** : `au
 2. Remplacez les fichiers du programme dans le même dossier. Ne supprimez pas `~/.config/galerie-photos/` ni `~/.cache/photo-library/`.
 3. Relancez `bash start-linux.sh` (ou `systemctl --user start photo-library.service`). Si `REQUIS-fr.md` a changé, `start-linux.sh` remet les paquets à jour.
 4. Rechargez la page (**Ctrl+F5**).
-5. Paramètres : **Galerie Médias 4.0**. *(Optionnel : montez votre dossier vidéo, par exemple `/mnt/cinema`, puis configurez-le dans **Paramètres → Cinéma**.)*
+5. Paramètres : **Galerie Médias 4.1**. *(Optionnel : montez votre dossier vidéo, par exemple `/mnt/cinema`, puis configurez-le dans **Paramètres → Cinéma**.)*
 
 ## À ne pas faire
 

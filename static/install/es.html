@@ -19,7 +19,7 @@
   </header>
   <article class="help-doc">
     <h1>Instalación</h1>
-    <p>Galerie Médias, versión 4.0. El sitio permanece en su ordenador. Las fotos pueden quedarse en un disco USB. La base (SQLite, miniaturas, ajustes) permanece siempre en el ordenador, nunca en el USB. El sitio solo escucha en HTTPS.</p>
+    <p>Galerie Médias, versión 4.1. El sitio permanece en su ordenador. Las fotos pueden quedarse en un disco USB. La base (SQLite, miniaturas, ajustes) permanece siempre en el ordenador, nunca en el USB. El sitio solo escucha en HTTPS.</p>
     <p>La misma guía existe en <a href="fr.html" hreflang="fr">francés</a>, en <a href="en.html" hreflang="en">inglés</a> y en <a href="de.html" hreflang="de">alemán</a>. El uso de los menús está en la ayuda <strong>?</strong>.</p>
 
     <h2>Dónde están los archivos</h2>
@@ -86,6 +86,9 @@
       <li><em>(Opcional)</em> Para películas, series y clips: indique la carpeta en <strong>Ajustes → Cine</strong>, guarde y pulse <strong>Indexar Cine</strong>.</li>
     </ol>
     <p>Las carpetas creadas se llaman <code>Annee 2024</code> y <code>Juin 2024</code>. Esos nombres permanecen en francés en el disco.</p>
+
+    <h2>Actualización (de 4.0 a 4.1)</h2>
+    <p>El mismo gesto: cierre el sitio, descomprima el zip sobre la misma carpeta, sin tocar la base ni las fotos, y recargue con <strong>Ctrl+F5</strong>. Ajustes muestra <strong>Galerie Médias 4.1</strong>. No hay que reindexar. El botón <strong>TV</strong> de una película avisa de que la primera conversión puede tardar de 4 a 5 minutos; después, la misma película empieza enseguida.</p>
 
     <h2>Actualización (de 3.0 a 4.0)</h2>
     <p>Cierre la ventana del sitio (o pare el servicio systemd en Linux). Descomprima el zip nuevo sobre la misma carpeta. No borre GaleriePhotos (Windows, macOS) ni <code>~/.config/galerie-photos</code> / <code>~/.cache/photo-library</code> (Linux). No vuelva a copiar ni a reindexar la biblioteca de Fotos: SQLite y los ajustes migran automáticamente a la 4.0. Luego ejecute <code>reparer-installation.bat</code>, <code>reparer-installation-mac.command</code>, o reinicie <code>start-linux.sh</code> / el servicio, y recargue con <strong>Ctrl+F5</strong>. Para activar <strong>Cine</strong>, indique su carpeta de vídeos en <strong>Ajustes → Cine</strong> y pulse <strong>Indexar Cine</strong>. El detalle completo está en <code>MISE-A-JOUR-es.md</code>.</p>

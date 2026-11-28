@@ -1,10 +1,17 @@
-# Galerie Médias 4.0 — eine bereits installierte Seite aktualisieren
+# Galerie Médias 4.1 — eine bereits installierte Seite aktualisieren
 
 Diese Datei gilt, wenn die Seite schon läuft. Erste Installation: [INSTALL-de.md](INSTALL-de.md).
 
 Andere Sprachen: [Français](MISE-A-JOUR-fr.md), [English](MISE-A-JOUR-en.md), [Español](MISE-A-JOUR-es.md).
 
-Nach der Aktualisierung zeigt **Einstellungen** **Galerie Médias 4.0** (auch oben links).
+Nach der Aktualisierung zeigt **Einstellungen** **Galerie Médias 4.1** (auch oben links).
+
+## Neu in 4.1
+
+- Schaltfläche **TV** für einen Film (Kino): die Meldung sagt, dass die erste Umwandlung **4 bis 5 Minuten** dauern kann. Die vorbereitete Datei bleibt erhalten, derselbe Film startet danach sofort.
+- Diese Umwandlung für den Fernseher ist schneller als in 4.0 (beschleunigte H.264-720p-Kodierung). Ein kurzes Video aus der Fotogalerie behält die Meldung von etwa einer Minute.
+- Die Wiedergabe eines Films im Browser (HLS) startet weiterhin in wenigen Sekunden.
+- Nichts neu indizieren. Fotos, Konten und Einstellungen bleiben unverändert.
 
 ## Neu in 4.0
 
@@ -43,7 +50,7 @@ Die **Fotos** und die **Datenbank** (Gesichter, Alben, Konten) bleiben. Nur das 
 5. Doppelklick auf `reparer-installation.bat` und warten Sie bis zum Ende.
 6. Doppelklick auf `ouvrir-galerie.bat`.
 7. Im Browser: **Strg+F5**.
-8. Einstellungen: **Galerie Médias 4.0**.
+8. Einstellungen: **Galerie Médias 4.1**.
 
 Ein vollständiges neues Indexieren ist unnötig. Der Fernseher nutzt auch Port **8766**: einmal `autoriser-parefeu.bat`, wenn er die Seite nicht sieht.
 
@@ -54,7 +61,7 @@ Ein vollständiges neues Indexieren ist unnötig. Der Fernseher nutzt auch Port 
 3. Fassen Sie `Library/Application Support/GaleriePhotos` nicht an.
 4. Doppelklick auf `reparer-installation-mac.command`, oder starten Sie `start-mac.command` erneut.
 5. Laden Sie die Seite neu (Cmd+Shift+R).
-6. Einstellungen: **Galerie Médias 4.0**.
+6. Einstellungen: **Galerie Médias 4.1**.
 
 ## Linux
 
@@ -62,7 +69,7 @@ Ein vollständiges neues Indexieren ist unnötig. Der Fernseher nutzt auch Port 
 2. Ersetzen Sie die Programmdateien im selben Ordner. Löschen Sie nicht `~/.config/galerie-photos/` und nicht `~/.cache/photo-library/`.
 3. Starten Sie `bash start-linux.sh` erneut (oder `systemctl --user start photo-library.service`). Wenn `REQUIS-de.md` sich geändert hat, aktualisiert `start-linux.sh` die Pakete.
 4. Laden Sie die Seite neu (**Strg+F5**).
-5. Einstellungen: **Galerie Médias 4.0**. *(Optional: hängen Sie Ihren Video-Ordner ein, z. B. `/mnt/cinema`, und tragen Sie ihn unter **Einstellungen → Kino** ein.)*
+5. Einstellungen: **Galerie Médias 4.1**. *(Optional: hängen Sie Ihren Video-Ordner ein, z. B. `/mnt/cinema`, und tragen Sie ihn unter **Einstellungen → Kino** ein.)*
 
 ## Nicht tun
 

@@ -99,7 +99,7 @@ def remux_copy_mp4(src: Path, dest: Path) -> bool:
     return True
 
 
-def ensure_play_mp4(src: Path, dest: Path) -> Path:
+def ensure_play_mp4(src: Path, dest: Path, *, preset: str = "veryfast") -> Path:
     """MP4 H.264/AAC dans le cache (navigateur et TV DLNA). HEVC iPhone inclus."""
     if dest.is_file() and dest.stat().st_size > 512:
         return dest
@@ -116,12 +116,12 @@ def ensure_play_mp4(src: Path, dest: Path) -> Path:
                 return dest
         if remux_copy_mp4(src, dest) and dest.is_file() and dest.stat().st_size > 512:
             return dest
-    if transcode_to_file(src, dest) and dest.is_file() and dest.stat().st_size > 512:
+    if transcode_to_file(src, dest, preset=preset) and dest.is_file() and dest.stat().st_size > 512:
         return dest
     raise ValueError("conversion impossible")
 
 
-def transcode_to_file(src: Path, dest: Path) -> bool:
+def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast") -> bool:
     """H.264 + AAC, 720p max, MP4 faststart — lisible dans Chrome/Firefox/Safari."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_name(f"{dest.stem}.{os.getpid()}.tmp.mp4")
@@ -149,7 +149,7 @@ def transcode_to_file(src: Path, dest: Path) -> bool:
                 "-c:v",
                 "libx264",
                 "-preset",
-                "veryfast",
+                preset,
                 "-crf",
                 "23",
                 "-profile:v",

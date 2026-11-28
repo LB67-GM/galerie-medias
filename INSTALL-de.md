@@ -1,6 +1,6 @@
 # Galerie Médias — Installation
 
-Version **4.0**. Die Seite bleibt auf Ihrem Computer. Die Fotos dürfen auf einem USB-Datenträger bleiben. Die Datenbank (SQLite, Miniaturen, Einstellungen) bleibt auf dem Computer, nie auf dem USB-Datenträger. Die Seite hört nur auf **HTTPS**. Es gibt keine Adresse `http://`.
+Version **4.1**. Die Seite bleibt auf Ihrem Computer. Die Fotos dürfen auf einem USB-Datenträger bleiben. Die Datenbank (SQLite, Miniaturen, Einstellungen) bleibt auf dem Computer, nie auf dem USB-Datenträger. Die Seite hört nur auf **HTTPS**. Es gibt keine Adresse `http://`.
 
 Dieselbe Anleitung: [Français](INSTALL-fr.md), [English](INSTALL-en.md), [Español](INSTALL-es.md). Voraussetzungen: [REQUIS-de.md](REQUIS-de.md). In der Seite: `static/install/`. Die Menüs stehen in der Hilfe **?**.
 
