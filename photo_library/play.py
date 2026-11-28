@@ -14,6 +14,7 @@ from photo_library.ffmpeg_util import ffmpeg_bin
 _VIDEO_RE = re.compile(r"Video:\s*([A-Za-z0-9_]+)")
 _AUDIO_RE = re.compile(r"Audio:\s*([A-Za-z0-9_]+)")
 _PIX_RE = re.compile(r"Video:.*?(yuv[\w]+|nv12|nv21)", re.DOTALL)
+_DURATION_RE = re.compile(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)")
 
 SAFE_VIDEO = {"h264"}
 SAFE_PIX = {"", "yuv420p", "yuvj420p", "nv12"}
@@ -26,6 +27,7 @@ class Probe:
     video_codec: str = ""
     pix_fmt: str = ""
     audio_codec: str = ""
+    duration_s: float | None = None
 
 
 def parse_probe_text(text: str) -> Probe:
@@ -42,7 +44,25 @@ def parse_probe_text(text: str) -> Probe:
         video_codec=video.group(1).lower(),
         pix_fmt=(pix_m.group(1).lower() if pix_m else ""),
         audio_codec=(audio.group(1).lower() if audio else ""),
+        duration_s=_duration_seconds(text),
     )
+
+
+def _duration_seconds(text: str) -> float | None:
+    match = _DURATION_RE.search(text)
+    if match is None:
+        return None
+    hours, minutes, seconds = int(match.group(1)), int(match.group(2)), float(match.group(3))
+    total = hours * 3600 + minutes * 60 + seconds
+    return total if total > 0 else None
+
+
+def tv_video_bitrate(duration_s: float | None) -> int:
+    """Débit vidéo pour rester sous 2 Go, limite de beaucoup de téléviseurs."""
+    seconds = float(duration_s) if duration_s and duration_s > 1 else 3 * 3600
+    budget_bits = int(1.6 * 1024**3 * 8)
+    video = int(budget_bits / seconds) - 128_000
+    return max(350_000, min(video, 1_500_000))
 
 
 def probe_video(path: Path) -> Probe:
@@ -71,7 +91,7 @@ def cached_play_path(cache: Path, media_id: int, size: int, mtime_ns: int) -> Pa
 
 def cinema_tv_path(cache: Path, item_id: int, size: int, mtime_ns: int) -> Path:
     """MP4 préparé pour la télé. Le suffixe change si le format TV change, pour ne pas réutiliser un ancien fichier."""
-    return cache / "cinema_cast" / f"{int(item_id)}-{int(size)}-{int(mtime_ns)}-tv720.mp4"
+    return cache / "cinema_cast" / f"{int(item_id)}-{int(size)}-{int(mtime_ns)}-tv2g.mp4"
 
 
 def _scale_vf() -> str:
@@ -136,12 +156,23 @@ def ensure_play_mp4(
                 return dest
         if remux_copy_mp4(src, dest) and dest.is_file() and dest.stat().st_size > 512:
             return dest
-    if transcode_to_file(src, dest, preset=preset, for_tv=for_tv) and dest.is_file() and dest.stat().st_size > 512:
+    if (
+        transcode_to_file(src, dest, preset=preset, for_tv=for_tv, duration_s=info.duration_s)
+        and dest.is_file()
+        and dest.stat().st_size > 512
+    ):
         return dest
     raise ValueError("conversion impossible")
 
 
-def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast", for_tv: bool = False) -> bool:
+def transcode_to_file(
+    src: Path,
+    dest: Path,
+    *,
+    preset: str = "veryfast",
+    for_tv: bool = False,
+    duration_s: float | None = None,
+) -> bool:
     """H.264 + AAC, 720p max, MP4 faststart — lisible dans Chrome/Firefox/Safari."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_name(f"{dest.stem}.{os.getpid()}.tmp.mp4")
@@ -164,6 +195,7 @@ def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast", for_tv
             else:
                 cmd += ["-an"]
             if for_tv:
+                rate = str(tv_video_bitrate(duration_s))
                 cmd += [
                     "-vf",
                     _tv_scale_vf(),
@@ -171,14 +203,20 @@ def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast", for_tv
                     "libx264",
                     "-preset",
                     "superfast",
-                    "-crf",
-                    "23",
+                    "-b:v",
+                    rate,
+                    "-maxrate",
+                    rate,
+                    "-bufsize",
+                    str(int(rate) * 2),
                     "-profile:v",
                     "main",
                     "-level:v",
                     "4.0",
                     "-pix_fmt",
                     "yuv420p",
+                    "-bf",
+                    "0",
                     "-tag:v",
                     "avc1",
                 ]

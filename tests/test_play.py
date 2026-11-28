@@ -65,6 +65,17 @@ def test_pcm_audio_not_safe() -> None:
     assert not browser_safe(info)
 
 
+def test_long_film_stays_under_two_gigabytes() -> None:
+    from photo_library.play import tv_video_bitrate
+
+    text = "Duration: 02:14:57.96, start: 0.000000\nStream #0:0: Video: h264, yuv420p"
+    info = parse_probe_text(text)
+    assert info.duration_s is not None and info.duration_s > 8000
+    rate = tv_video_bitrate(info.duration_s)
+    total = (rate + 128_000) * info.duration_s / 8
+    assert total < 1.9 * 1024**3
+
+
 def test_play_cache_name() -> None:
     path = cached_play_path(Path("/tmp/cache"), 42, 1000, 9)
     assert path.name == "42-1000-9.mp4"
@@ -116,6 +127,7 @@ if __name__ == "__main__":
     test_h264_aac_is_safe()
     test_incomplete_mov()
     test_pcm_audio_not_safe()
+    test_long_film_stays_under_two_gigabytes()
     test_play_cache_name()
     with tempfile.TemporaryDirectory() as name:
         test_transcode_tiny_clip(P(name))

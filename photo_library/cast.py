@@ -325,18 +325,9 @@ def _http_get(url: str, timeout: float = 4) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
-# Profil DLNA lu par les télés LG et Samsung : H.264 Main, 1280x720, AAC.
-DLNA_VIDEO_FEATURES = (
-    "DLNA.ORG_PN=AVC_MP4_MP_HD_720p_AAC;"
-    "DLNA.ORG_OP=01;DLNA.ORG_CI=0;"
-    "DLNA.ORG_FLAGS=01700000000000000000000000000000"
-)
-
-
 def didl_metadata(uri: str, title: str, mime: str, *, video: bool) -> str:
     klass = "object.item.videoItem" if video else "object.item.imageItem.photo"
-    extra = DLNA_VIDEO_FEATURES if video and mime == "video/mp4" else "*"
-    proto = f"http-get:*:{mime}:{extra}"
+    proto = f"http-get:*:{mime}:*"
     didl = (
         '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" '
         'xmlns:dc="http://purl.org/dc/elements/1.1/" '
@@ -535,27 +526,24 @@ class _CastFileHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", mime)
         self.send_header("Content-Length", str(length))
         self.send_header("Accept-Ranges", "bytes")
-        if mime == "video/mp4":
-            mode = self.headers.get("transferMode.dlna.org") or "Streaming"
-            if mode not in {"Streaming", "Interactive", "Background"}:
-                mode = "Streaming"
-            self.send_header("transferMode.dlna.org", mode)
-            self.send_header("contentFeatures.dlna.org", DLNA_VIDEO_FEATURES)
         if status == 206:
             self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
         self.send_header("Cache-Control", "private, max-age=120")
         self.end_headers()
         if head_only:
             return
-        with path.open("rb") as fh:
-            fh.seek(start)
-            remaining = length
-            while remaining:
-                chunk = fh.read(min(64 * 1024, remaining))
-                if not chunk:
-                    break
-                self.wfile.write(chunk)
-                remaining -= len(chunk)
+        try:
+            with path.open("rb") as fh:
+                fh.seek(start)
+                remaining = length
+                while remaining:
+                    chunk = fh.read(min(64 * 1024, remaining))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    remaining -= len(chunk)
+        except (BrokenPipeError, ConnectionResetError):
+            return
 
 
 def start_cast_http_server(
