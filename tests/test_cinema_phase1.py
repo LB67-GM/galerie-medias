@@ -430,7 +430,7 @@ def test_optical_dvd_bluray_and_disc_fallback(tmp_path: Path) -> None:
     )
     from photo_library.version import APP_VERSION
 
-    assert APP_VERSION == "4.1"
+    assert APP_VERSION == "4.2"
 
     # Serveur sans lecteur optique : aucune erreur, configured=False
     empty_disc = inspect_configured_disc("")

@@ -26,7 +26,7 @@
   </header>
   <article id="helpArticle" class="help-doc">
     <h1>Ayuda</h1>
-    <p>Galerie Médias, versión 4.1. Esta guía describe cada menú, en el orden en que los ve. El mismo texto existe en francés, inglés y alemán: cambie el idioma arriba a la derecha y vuelva a abrir <strong>?</strong>.</p>
+    <p>Galerie Médias, versión 4.2. Esta guía describe cada menú, en el orden en que los ve. El mismo texto existe en francés, inglés y alemán: cambie el idioma arriba a la derecha y vuelva a abrir <strong>?</strong>.</p>
     <nav class="toc" aria-label="En esta página">
       <ol>
         <li><a href="#help-application">La aplicación</a></li>
@@ -175,7 +175,7 @@ sudo cp -L /etc/letsencrypt/live/photos.example.com/privkey.pem "$HOME/Library/A
       <li><strong>Reproducción en el navegador (HLS)</strong>: el vídeo comienza en pocos segundos mediante transmisión HLS en directo (<code>hls.js</code>, licencia Apache 2.0), con selección de pista de audio, subtítulos, capítulos, calidad y <strong>reanudación</strong> automática (<em>Seguir viendo</em>). Atajos: <code>Espacio</code> (pausa), <code>F</code> (pantalla completa), flechas izquierda/derecha (±10 s).</li>
       <li><strong>Filtros y enriquecimiento con Wikidata</strong>: filtre por <strong>Tipo</strong> (Película, Serie, Videoclip, Documental), <strong>Categoría</strong> (Policiaco, Drama, Comedia, Suspense, Ciencia ficción…), <strong>Año</strong> o búsqueda. Un administrador pulsa <strong>Indexar Cine</strong> y luego <strong>Enriquecer (Wikidata)</strong> para completar categorías, año, director y resumen desde Wikidata (datos abiertos CC0, sin clave API). El botón <strong>✎</strong> permite editar y bloquear una ficha manualmente.</li>
       <li><strong>Unidad óptica física (opcional)</strong>: indique su lector nativo en <strong>Ajustes → Cine</strong> (p. ej. <code>/dev/sr0</code> en Linux o <code>D:\</code> en Windows) para mostrar el botón <strong>Leer disco</strong>. Déjelo vacío en un servidor sin lector. Los discos comerciales cifrados (CSS/AACS/BD+) requieren bibliotecas del sistema aparte no incluidas en Galerie Médias.</li>
-      <li><strong>Televisor (DLNA)</strong>: el botón <strong>TV</strong> del reproductor envía un archivo de vídeo a un televisor LG o Samsung en la misma red local (puerto 8766). Si hay que convertir la película, cuente de 4 a 5 minutos. Después, la misma película empieza enseguida.</li>
+      <li><strong>Televisor (DLNA)</strong>: el botón <strong>TV</strong> del reproductor envía un archivo de vídeo a un televisor LG o Samsung en la misma red local (puerto 8766). La ventana dice que toque el televisor para enviar la película. La película se convierte a H.264 720p, el formato que lee el televisor. La primera vez, cuente de 4 a 5 minutos. Después, la misma película empieza enseguida.</li>
       <li><strong>Papelera de Cine</strong>: un administrador puede enviar una película o clip a la papelera (botón <strong>🗑</strong> en la tarjeta o <strong>Eliminar</strong> en el reproductor). El archivo se mueve a <code>.corbeille/</code> dentro de la carpeta Cine durante 30 días y puede restaurarse o eliminarse definitivamente desde la pestaña <strong>Papelera</strong>.</li>
       <li><strong>Dos índices separados</strong>: <strong>Indexar Fotos</strong> (barra Herramientas arriba) indexa solo la biblioteca de <strong>Fotos</strong>. <strong>Indexar Cine</strong> (en la pestaña <strong>Cine</strong> o en <strong>Ajustes → Cine</strong>) indexa solo la carpeta de <strong>Cine</strong>.</li>
     </ul>

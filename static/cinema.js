@@ -913,5 +913,11 @@
     refresh: loadView,
     stopStream: stopStream,
     loadTrash: loadTrash,
+    currentFileItem: () => {
+      const dlg = $("cinemaPlayerDlg");
+      const item = cState.currentItem;
+      if (!item || !dlg || !dlg.open || item.source_type !== "file") return null;
+      return item;
+    },
   };
 })();

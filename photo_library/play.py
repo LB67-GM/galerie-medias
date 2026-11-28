@@ -69,8 +69,22 @@ def cached_play_path(cache: Path, media_id: int, size: int, mtime_ns: int) -> Pa
     return cache / "play" / f"{int(media_id)}-{int(size)}-{int(mtime_ns)}.mp4"
 
 
+def cinema_tv_path(cache: Path, item_id: int, size: int, mtime_ns: int) -> Path:
+    """MP4 préparé pour la télé. Le suffixe change si le format TV change, pour ne pas réutiliser un ancien fichier."""
+    return cache / "cinema_cast" / f"{int(item_id)}-{int(size)}-{int(mtime_ns)}-tv720.mp4"
+
+
 def _scale_vf() -> str:
     return "scale=-2:'min(720,ih)',format=yuv420p"
+
+
+def _tv_scale_vf() -> str:
+    """1280x720, H.264 Main : le profil DLNA que lisent les télés LG et Samsung."""
+    return (
+        "scale=1280:720:force_original_aspect_ratio=decrease,"
+        "pad=1280:720:(ow-iw)/2:(oh-ih)/2:color=black,"
+        "format=yuv420p"
+    )
 
 
 def remux_copy_mp4(src: Path, dest: Path) -> bool:
@@ -99,14 +113,20 @@ def remux_copy_mp4(src: Path, dest: Path) -> bool:
     return True
 
 
-def ensure_play_mp4(src: Path, dest: Path, *, preset: str = "veryfast") -> Path:
-    """MP4 H.264/AAC dans le cache (navigateur et TV DLNA). HEVC iPhone inclus."""
+def ensure_play_mp4(
+    src: Path, dest: Path, *, preset: str = "veryfast", for_tv: bool = False
+) -> Path:
+    """MP4 H.264/AAC dans le cache (navigateur et TV DLNA). HEVC iPhone inclus.
+
+    for_tv convertit toujours : la copie telle quelle garde un profil (4K, High, niveau élevé)
+    que la télévision refuse avec « format non pris en charge ».
+    """
     if dest.is_file() and dest.stat().st_size > 512:
         return dest
     info = probe_video(src)
     if not info.readable:
         raise ValueError("vidéo illisible")
-    if browser_safe(info):
+    if not for_tv and browser_safe(info):
         if src.suffix.lower() in {".mp4", ".m4v"}:
             if remux_copy_mp4(src, dest) and dest.is_file() and dest.stat().st_size > 512:
                 return dest
@@ -116,12 +136,12 @@ def ensure_play_mp4(src: Path, dest: Path, *, preset: str = "veryfast") -> Path:
                 return dest
         if remux_copy_mp4(src, dest) and dest.is_file() and dest.stat().st_size > 512:
             return dest
-    if transcode_to_file(src, dest, preset=preset) and dest.is_file() and dest.stat().st_size > 512:
+    if transcode_to_file(src, dest, preset=preset, for_tv=for_tv) and dest.is_file() and dest.stat().st_size > 512:
         return dest
     raise ValueError("conversion impossible")
 
 
-def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast") -> bool:
+def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast", for_tv: bool = False) -> bool:
     """H.264 + AAC, 720p max, MP4 faststart — lisible dans Chrome/Firefox/Safari."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_name(f"{dest.stem}.{os.getpid()}.tmp.mp4")
@@ -143,31 +163,46 @@ def transcode_to_file(src: Path, dest: Path, *, preset: str = "veryfast") -> boo
                 cmd += ["-map", "0:a:0?"]
             else:
                 cmd += ["-an"]
-            cmd += [
-                "-vf",
-                _scale_vf(),
-                "-c:v",
-                "libx264",
-                "-preset",
-                preset,
-                "-crf",
-                "23",
-                "-profile:v",
-                "high",
-                "-pix_fmt",
-                "yuv420p",
-            ]
-            if with_audio:
+            if for_tv:
                 cmd += [
-                    "-c:a",
-                    "aac",
-                    "-ac",
-                    "2",
-                    "-b:a",
-                    "128k",
-                    "-ar",
-                    "44100",
+                    "-vf",
+                    _tv_scale_vf(),
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "superfast",
+                    "-crf",
+                    "23",
+                    "-profile:v",
+                    "main",
+                    "-level:v",
+                    "4.0",
+                    "-pix_fmt",
+                    "yuv420p",
+                    "-tag:v",
+                    "avc1",
                 ]
+            else:
+                cmd += [
+                    "-vf",
+                    _scale_vf(),
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    preset,
+                    "-crf",
+                    "23",
+                    "-profile:v",
+                    "high",
+                    "-pix_fmt",
+                    "yuv420p",
+                ]
+            if with_audio:
+                cmd += ["-c:a", "aac", "-ac", "2", "-b:a", "128k"]
+                if for_tv:
+                    cmd += ["-profile:a", "aac_low", "-ar", "48000"]
+                else:
+                    cmd += ["-ar", "44100"]
             cmd += [
                 "-max_muxing_queue_size",
                 "1024",

@@ -1,6 +1,6 @@
 # Galerie Médias — requirements
 
-Version **4.1**. Other languages: [Français](REQUIS-fr.md), [Español](REQUIS-es.md), [Deutsch](REQUIS-de.md).
+Version **4.2**. Other languages: [Français](REQUIS-fr.md), [Español](REQUIS-es.md), [Deutsch](REQUIS-de.md).
 
 Step-by-step install: [INSTALL-en.md](INSTALL-en.md).
 

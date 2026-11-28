@@ -107,7 +107,7 @@ from photo_library.locate import locate_library_file, locate_still_sibling, mayb
 from photo_library.move_media import move_selected, move_targets
 from photo_library.place_groups import aliases_for, cluster_places
 from photo_library.paths import is_moment_folder, is_month_folder, list_years
-from photo_library.play import cached_play_path, ensure_play_mp4
+from photo_library.play import cached_play_path, cinema_tv_path, ensure_play_mp4
 from photo_library.places import set_media_places
 from photo_library.scan import index_library
 from photo_library.version import APP_VERSION
@@ -968,13 +968,11 @@ def create_app(
                 422,
                 "Envoi DLNA direct réservé aux fichiers vidéo (utilisez le navigateur pour DVD/Blu-ray).",
             )
-        dest = (
-            cache
-            / "cinema_cast"
-            / f"{body.item_id}-{int(item.get('size') or 0)}-{int(item.get('mtime_ns') or 0)}.mp4"
+        dest = cinema_tv_path(
+            cache, body.item_id, int(item.get("size") or 0), int(item.get("mtime_ns") or 0)
         )
         try:
-            ensure_play_mp4(fpath, dest, preset="ultrafast")
+            ensure_play_mp4(fpath, dest, for_tv=True)
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         token = make_token(secret, body.item_id, "cinema")

@@ -99,6 +99,9 @@ def test_transcode_tiny_clip(tmp_path: Path) -> None:
     assert info.readable
     assert transcode_to_file(src, dest)
     assert dest.is_file() and dest.stat().st_size > 500
+    tv = tmp_path / "tv.mp4"
+    assert transcode_to_file(src, tv, for_tv=True)
+    assert tv.is_file() and tv.stat().st_size > 500
     cached = tmp_path / "cached.mp4"
     out = ensure_play_mp4(src, cached)
     assert out == cached

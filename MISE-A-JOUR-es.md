@@ -1,15 +1,21 @@
-# Galerie Médias 4.1 — actualizar un sitio ya instalado
+# Galerie Médias 4.2 — actualizar un sitio ya instalado
 
 Este archivo sirve si el sitio ya funciona. Primera instalación: [INSTALL-es.md](INSTALL-es.md).
 
 Otros idiomas: [Français](MISE-A-JOUR-fr.md), [English](MISE-A-JOUR-en.md), [Deutsch](MISE-A-JOUR-de.md).
 
-Después de la actualización, **Ajustes** muestra **Galerie Médias 4.1** (también arriba a la izquierda).
+Después de la actualización, **Ajustes** muestra **Galerie Médias 4.2** (también arriba a la izquierda).
+
+## Novedades de la 4.2
+
+- **TV** desde una película: la ventana dice «Toque un televisor para enviar la película». Ya no pide abrir una foto.
+- La película se convierte a H.264 720p con audio AAC, el formato que lee un televisor LG o Samsung. La primera vez, cuente de 4 a 5 minutos. Después, la misma película empieza enseguida.
+- No hay que reindexar. Fotos, cuentas y ajustes no se mueven.
 
 ## Novedades de la 4.1
 
 - Botón **TV** de una película (Cine): el mensaje indica que la primera conversión puede tardar **de 4 a 5 minutos**. El archivo preparado se conserva: la misma película empieza después enseguida.
-- Esta conversión hacia el televisor es más rápida que en la 4.0 (codificación H.264 720p acelerada). Un vídeo corto de la galería Fotos conserva el mensaje de alrededor de un minuto.
+- La película se convierte a H.264 720p con audio AAC, el formato que lee un televisor LG o Samsung. Enviarla tal cual (4K o un perfil demasiado alto) mostraba «formato no compatible». Un vídeo corto de la galería Fotos conserva el mensaje de alrededor de un minuto.
 - La reproducción de una película en el navegador (HLS) sigue empezando en pocos segundos.
 - No hay que reindexar. Fotos, cuentas y ajustes no se mueven.
 
@@ -50,7 +56,7 @@ Las **fotos** y la **base** (rostros, álbumes, cuentas) no se mueven. Solo se s
 5. Doble clic en `reparer-installation.bat` y espere al final.
 6. Doble clic en `ouvrir-galerie.bat`.
 7. En el navegador: **Ctrl+F5**.
-8. Ajustes: **Galerie Médias 4.1**.
+8. Ajustes: **Galerie Médias 4.2**.
 
 No hace falta volver a indexar todo. El televisor usa también el puerto **8766**: `autoriser-parefeu.bat` una vez, si no ve el sitio.
 
@@ -61,7 +67,7 @@ No hace falta volver a indexar todo. El televisor usa también el puerto **8766*
 3. No toque `Biblioteca/Application Support/GaleriePhotos`.
 4. Doble clic en `reparer-installation-mac.command`, o vuelva a lanzar `start-mac.command`.
 5. Recargue la página (Cmd+Shift+R).
-6. Ajustes: **Galerie Médias 4.1**.
+6. Ajustes: **Galerie Médias 4.2**.
 
 ## Linux
 
@@ -69,7 +75,7 @@ No hace falta volver a indexar todo. El televisor usa también el puerto **8766*
 2. Sustituya los archivos del programa en la misma carpeta. No borre `~/.config/galerie-photos/` ni `~/.cache/photo-library/`.
 3. Vuelva a lanzar `bash start-linux.sh` (o `systemctl --user start photo-library.service`). Si `REQUIS-es.md` cambió, `start-linux.sh` actualiza los paquetes.
 4. Recargue la página (**Ctrl+F5**).
-5. Ajustes: **Galerie Médias 4.1**. *(Opcional: monte su carpeta de vídeos, por ejemplo `/mnt/cinema`, y configúrela en **Ajustes → Cine**.)*
+5. Ajustes: **Galerie Médias 4.2**. *(Opcional: monte su carpeta de vídeos, por ejemplo `/mnt/cinema`, y configúrela en **Ajustes → Cine**.)*
 
 ## No haga esto
 

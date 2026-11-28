@@ -325,9 +325,18 @@ def _http_get(url: str, timeout: float = 4) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
+# Profil DLNA lu par les télés LG et Samsung : H.264 Main, 1280x720, AAC.
+DLNA_VIDEO_FEATURES = (
+    "DLNA.ORG_PN=AVC_MP4_MP_HD_720p_AAC;"
+    "DLNA.ORG_OP=01;DLNA.ORG_CI=0;"
+    "DLNA.ORG_FLAGS=01700000000000000000000000000000"
+)
+
+
 def didl_metadata(uri: str, title: str, mime: str, *, video: bool) -> str:
     klass = "object.item.videoItem" if video else "object.item.imageItem.photo"
-    proto = f"http-get:*:{mime}:*"
+    extra = DLNA_VIDEO_FEATURES if video and mime == "video/mp4" else "*"
+    proto = f"http-get:*:{mime}:{extra}"
     didl = (
         '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" '
         'xmlns:dc="http://purl.org/dc/elements/1.1/" '
@@ -412,7 +421,7 @@ def resolve_cast_file(
     """Fichier JPEG/MP4 que la télévision peut télécharger (jeton HMAC)."""
     from photo_library.db import connect
     from photo_library.locate import locate_library_file
-    from photo_library.play import cached_play_path
+    from photo_library.play import cached_play_path, cinema_tv_path
     from photo_library.thumbs import make_preview, preview_file
 
     media_id, variant = parse_token(secret, token)
@@ -424,10 +433,8 @@ def resolve_cast_file(
             ).fetchone()
             if crow is None:
                 raise FileNotFoundError("vidéo Cinéma introuvable")
-            dest = (
-                cache
-                / "cinema_cast"
-                / f"{media_id}-{int(crow['size'] or 0)}-{int(crow['mtime_ns'] or 0)}.mp4"
+            dest = cinema_tv_path(
+                cache, media_id, int(crow["size"] or 0), int(crow["mtime_ns"] or 0)
             )
             if dest.is_file() and dest.stat().st_size > 512:
                 return dest, "video/mp4"
@@ -528,6 +535,12 @@ class _CastFileHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", mime)
         self.send_header("Content-Length", str(length))
         self.send_header("Accept-Ranges", "bytes")
+        if mime == "video/mp4":
+            mode = self.headers.get("transferMode.dlna.org") or "Streaming"
+            if mode not in {"Streaming", "Interactive", "Background"}:
+                mode = "Streaming"
+            self.send_header("transferMode.dlna.org", mode)
+            self.send_header("contentFeatures.dlna.org", DLNA_VIDEO_FEATURES)
         if status == 206:
             self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
         self.send_header("Cache-Control", "private, max-age=120")

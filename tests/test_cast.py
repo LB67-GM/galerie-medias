@@ -111,6 +111,10 @@ def test_parse_ssdp_and_device_xml() -> None:
 def test_didl_and_soap() -> None:
     didl = didl_metadata("http://192.168.1.20:8766/api/cast/file/t", "a.jpg", "image/jpeg", video=False)
     assert "imageItem" in didl
+    assert "DLNA.ORG_PN" not in didl
+    video = didl_metadata("http://192.168.1.20:8766/api/cast/file/t", "film.mp4", "video/mp4", video=True)
+    assert "videoItem" in video
+    assert "AVC_MP4_MP_HD_720p_AAC" in video
     env = soap_envelope("Play", "<InstanceID>0</InstanceID><Speed>1</Speed>")
     assert b"Play" in env
     assert b"AVTransport" in env

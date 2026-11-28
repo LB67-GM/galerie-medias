@@ -1,3 +1,3 @@
 """Version affichée dans l’en-tête, les paramètres et l’archive de distribution."""
 
-APP_VERSION = "4.1"
+APP_VERSION = "4.2"

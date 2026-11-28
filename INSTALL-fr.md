@@ -1,6 +1,6 @@
 # Galerie Médias — installation
 
-Version **4.1**. Le site reste sur votre ordinateur. Les photos peuvent rester sur un disque USB. La base (SQLite, miniatures, réglages) reste sur l’ordinateur, jamais sur le USB. Le site n’écoute qu’en **HTTPS**. Il n’y a pas d’adresse `http://`.
+Version **4.2**. Le site reste sur votre ordinateur. Les photos peuvent rester sur un disque USB. La base (SQLite, miniatures, réglages) reste sur l’ordinateur, jamais sur le USB. Le site n’écoute qu’en **HTTPS**. Il n’y a pas d’adresse `http://`.
 
 La même notice : [English](INSTALL-en.md), [Español](INSTALL-es.md), [Deutsch](INSTALL-de.md). Prérequis : [REQUIS-fr.md](REQUIS-fr.md). Dans le site : `static/install/`. Les menus sont expliqués dans l’aide **?**.
 

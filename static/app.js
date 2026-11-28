@@ -4007,6 +4007,7 @@ async function refreshCastDevices() {
     const devices = data.devices || [];
     renderCastList(devices);
     if (!devices.length) setCastMsg(data.hint || "");
+    else if (state.castCinemaItem) setCastMsg(tr("ui.castTouchFilm"));
     else if (state.lbItem) setCastMsg(tr("ui.castTouch"));
     else setCastMsg(tr("ui.castOpen"));
   } catch (err) {
@@ -4079,7 +4080,11 @@ function openCastDialog(opts) {
 }
 
 $("lbCast").addEventListener("click", () => openCastDialog());
-$("btnCast").addEventListener("click", () => openCastDialog());
+$("btnCast").addEventListener("click", () => {
+  const cinema = window.GalerieCinema;
+  const film = cinema && cinema.currentFileItem ? cinema.currentFileItem() : null;
+  openCastDialog(film ? { cinemaItem: film } : undefined);
+});
 $("castRefresh").addEventListener("click", () => refreshCastDevices());
 $("castStop").addEventListener("click", async () => {
   const device = state.castDevice;
